@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>No Plastic — Liso Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--bg:#F0F0EB;--black:#111;--pink:#F9BFDC;--lime:#C8F55A;--border:transparent}
+body{color:var(--black);font-family:'Syne',sans-serif;overflow-x:hidden;background:#fff}
+.nav{display:flex;align-items:center;justify-content:flex-start;gap:40px;padding:0 40px;height:120px}
+.nav-logo{height:32px;display:block;text-decoration:none;flex-shrink:0}
+.nav-logo svg{height:32px;width:auto}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:var(--black);text-decoration:none;padding:8px 24px;border-radius:100px}
+.nav-links a:hover{color:#fff}
+.burger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.burger span{display:block;width:22px;height:2px;background:var(--black);border-radius:2px}
+.mob{display:none;position:fixed;inset:0;z-index:400;background:var(--black);flex-direction:column}
+.mob.open{display:flex}
+.mob-head{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:#fff;flex-shrink:0}
+.mob-head svg{height:36px;width:auto}
+.mob-x{background:none;border:none;font-size:22px;font-weight:700;cursor:pointer;color:var(--black)}
+.mob-nav{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 40px}
+.mob-nav a{font-family:'Syne Mono',monospace;font-size:28px;color:#fff;text-decoration:none;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.1);display:block}
+.mob-nav a span{border-bottom:2px solid #fff;padding-bottom:2px}
+header{background:transparent}
+.proj-img{width:100%;display:block}
+.proj-img-placeholder{width:100%;aspect-ratio:16/9;background:#f5f5f5;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border)}
+.proj-img-placeholder span{font-family:'Syne Mono',monospace;font-size:12px;color:#aaa;letter-spacing:.1em}
+.proj-fullvid{width:100%;display:block;border-bottom:1px solid var(--border)}
+.editorial-block{background:#fff;padding:80px 120px;border-bottom:1px solid var(--border)}
+.editorial-text{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.4vw,20px);line-height:1.9;color:var(--black);max-width:820px;margin:0 auto}
+.editorial-text p{margin-bottom:1.4em}
+.editorial-text p:last-child{margin-bottom:0}
+@media(max-width:768px){.editorial-block{padding:48px 24px}}
+.proj-nav{display:grid;grid-template-columns:1fr 1fr;padding-top:96px}
+.pnav{padding:20px 48px;text-decoration:none;color:var(--black);display:flex;flex-direction:row;align-items:center;gap:10px;position:relative}
+.pnav:hover{opacity:.65}
+.pnav--right{flex-direction:row-reverse;justify-content:flex-start}
+.pnav-lbl{font-family:'Syne Mono',monospace;font-size:clamp(14px,1.3vw,20px);font-weight:700;color:var(--black);display:block;line-height:1;flex-shrink:0}
+.pnav-icon{width:72px;height:72px;object-fit:contain;display:block;opacity:.7;transform:translateY(0) rotate(-4deg);transition:opacity .2s,transform .3s cubic-bezier(.22,1,.36,1);position:absolute;top:-80px;left:48px}
+.pnav--right .pnav-icon{transform:translateY(6px) rotate(4deg);left:auto;right:48px}
+.pnav:hover .pnav-icon{opacity:1;transform:translateY(0) rotate(-2deg)}
+.pnav--right:hover .pnav-icon{opacity:1;transform:translateY(0) rotate(2deg)}
+.pnav-name{font-family:'Syne Mono',monospace;font-size:clamp(13px,1.3vw,18px);font-weight:400;letter-spacing:.01em;line-height:1;color:var(--black)}
+footer{background:var(--black);padding:28px 48px 40px}
+.ft-disc{margin-bottom:0;overflow:hidden}
+.ft-run{display:inline-block;animation:ftScroll 42s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(16px,2.4vw,38px);letter-spacing:.04em;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+.ft-line{overflow:hidden;white-space:nowrap}
+@keyframes ftScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ft-copy{font-family:'Syne Mono',monospace;font-size:10px;color:var(--lime);text-align:center;margin-top:20px;letter-spacing:.05em;opacity:.7}
+.ft-logo{display:flex;justify-content:center;margin:20px 0 16px}
+.ft-logo img{height:44px;width:auto}
+.ft-soc{display:flex;justify-content:center;gap:12px}
+.soc{width:40px;height:40px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.soc img{width:40px;height:40px;object-fit:contain;display:block}
+@media(max-width:768px){
+  .nav-links{display:none}.burger{display:flex}
+  .proj-nav{grid-template-columns:1fr}
+  .pnav{padding:24px 20px;border-bottom:1px solid var(--border)}
+  .pnav--right{text-align:left;align-items:flex-start}
+  footer{padding:24px 20px 32px}
+}
+.float-nav{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;gap:20px;align-items:center}
+.float-nav a{font-family:'Syne Mono',monospace;font-size:14px;color:var(--black);text-decoration:none;line-height:1;display:block;transition:opacity .2s}
+.float-nav a:hover{opacity:.6}
+@media(max-width:768px){.float-nav{display:none}}
+</style>
+</head>
+<body>
+<nav class="float-nav">
+  <a href="index.html" title="home">⌂*✿:·</a>
+  <a href="work.html" title="my work">°*✶.</a>
+  <a href="about.html" title="about">₊˚౨ৎ˚</a>
+</nav>
+<div class="mob" id="mob">
+  <div class="mob-head"><svg width="100" height="65" viewBox="0 0 135 88" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38.9214 21.4081C41.0735 20.4273 43.6554 20.5237 45.9765 21.419C48.2977 22.3144 50.3158 23.9927 51.3514 26.1155L51.5874 26.5992L51.9483 26.2003C55.2762 22.5161 61.3961 20.2101 66.3288 20.2641C67.3885 20.2757 68.3816 20.4777 69.4986 20.587L69.688 20.6056L69.8109 20.4609C71.3182 18.8247 73.5014 17.7579 75.3412 17.4506C87.4135 15.6018 97.045 17.4778 104.287 24.2507L104.549 24.4956L104.797 24.2367C110.105 16.6302 120.86 17.3964 125.289 24.4831C126.915 27.116 127.431 30.2852 126.725 33.2986C126.036 36.1874 124.22 38.682 121.681 40.2258C119.579 41.5301 116.737 42.1478 114.278 41.9045C111.068 42.9431 110.661 44.7283 110.265 45.9135C108.552 50.939 104.916 55.0825 100.152 57.4364C95.9754 59.495 91.1534 59.8185 86.7402 58.3365C85.5491 61.5495 84.9828 62.8686 84.2475 64.0933C81.155 68.7896 76.6546 71.4838 71.8079 72.5841C65.7438 73.8308 60.1955 72.3036 55.5215 69.101C52.5569 68.7803 51.3815 69.0835 50.2024 69.1458C49.0218 69.2082 47.8165 69.0301 46.4 68.6384C45.582 70.3321 44.4738 72.4111 42.9847 74.6128C40.6761 76.0604 38.0681 76.5654C35.4392 77.0489 32.7244 76.4767 30.5148 74.9735C27.9429 73.2191 26.1992 70.4655 25.5706 67.4273C24.8088 62.8311 24.3248 63.2961C19.6005 67.8391 12.1028 66.8792 8.59802 61.265C6.71806 55.6899 6.38807 53.5411 6.99166 51.393C8.14278 47.1175 12.066 44.0732 16.4784 43.9111C18.5098 20.2158 18.4528 19.849 18.3525 19.1133C17.8098 14.8726 17.9876 11.0653 20.6201 7.50293C24.3662 2.43368 32.1432 1.62887 37.0967 5.4834C38.9446 2.34536 42.1665 0.549651 45.7285 0.135742Z" fill="black"/></svg><button class="mob-x" id="mobX">✕</button></div>
+  <div class="mob-nav">
+    <a href="index.html"><span>home ⌂*✿:·</span></a>
+    <a href="work.html"><span>my work °*✶.</span></a>
+    <a href="about.html"><span>about ₊˚౨ৎ˚</span></a>
+  </div>
+</div>
+<header>
+  <div class="nav">
+    <a href="index.html" class="nav-logo"><img src="assets/logo%20liso%20noir.png" alt="Liso Studio" style="height:32px;width:auto;display:block"></a>
+    <div class="nav-links">
+      <a href="index.html">home ⌂*✿:·</a>
+      <a href="work.html">my work °*✶.</a>
+      <a href="about.html">about ₊˚౨ৎ˚</a>
+    </div>
+    <button class="burger" id="mobOpen"><span></span><span></span></button>
+  </div>
+</header>
+
+<img src="assets/projects/noplastic.png" alt="No Plastic" class="proj-img">
+
+<div class="editorial-block">
+  <div class="editorial-text">
+    <p>Want to try the No Plastic experience? <a href="https://cloud.protopie.io/p/206b9e3a42" target="_blank" style="color:inherit;text-decoration:underline">Right this way, please!</a></p>
+    <p>No Plastic was one of those projects where everything fell into place: a close-knit team, an inspiring brief that required a little imagination and letting go, and above all, a focus on the user.</p>
+    <p>Thank you to Iris Debaveye and Sarah Saulnier De Praingy for their high standards, valuable feedback, and trust throughout the project.</p>
+    <p>And above all, a big thank you to Faratina, Louise, and Caroline, with whom I have shared some of my most powerful and meaningful projects. Always a pleasure to create together, girls. &lt;3⋆. 𐙚 ˚</p>
+  </div>
+</div>
+
+<div class="proj-nav">
+  <a href="foodmatcher.html" class="pnav"><img class="pnav-icon" src="assets/fmgif.gif" alt=""><span class="pnav-lbl"><</span><span class="pnav-name">Food Matcher</span></a>
+  <a href="jobexpresso.html" class="pnav pnav--right"><img class="pnav-icon" src="assets/jobxgif.gif" alt=""><span class="pnav-lbl">></span><span class="pnav-name">Job Expresso</span></a>
+</div>
+
+<footer>
+  <div class="ft-disc">
+    <div class="ft-line"><span class="ft-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
+    <div class="ft-line"><span class="ft-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  </div>
+  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:44px;width:auto"></div>
+  <div class="ft-soc" id="ftSoc">
+    <a href="https://www.behance.net/lfnds" target="_blank" class="soc"><img src="assets/icons/Behance/lime.png" alt="Behance" draggable="false"></a>
+    <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc"><img src="assets/icons/Pinterest/lime.png" alt="Pinterest" draggable="false"></a>
+    <a href="https://www.linkedin.com" target="_blank" class="soc"><img src="assets/icons/LinkedIN/lime.png" alt="LinkedIn" draggable="false"></a>
+  </div>
+  <p class="ft-copy">lisostudio® 2026</p>
+</footer>
+<script>
+const mob=document.getElementById('mob');
+if(mob){document.getElementById('mobOpen').onclick=()=>{mob.classList.add('open');document.body.style.overflow='hidden'};document.getElementById('mobX').onclick=()=>{mob.classList.remove('open');document.body.style.overflow=''}}
+// Footer icons — smooth lerp follow, stay on leave, reset on footer exit
+(function(){
+  var items=[];
+  document.querySelectorAll('.ft-soc .soc').forEach(function(icon){
+    var s={following:false,origCx:0,origCy:0,tx:0,ty:0,cx:0,cy:0,raf:null};
+    items.push({icon:icon,s:s});
+    icon.style.cursor='grab';
+    function tick(){s.cx+=(s.tx-s.cx)*0.12;s.cy+=(s.ty-s.cy)*0.12;icon.style.transform='translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';if(s.following||Math.abs(s.tx-s.cx)>0.1||Math.abs(s.ty-s.cy)>0.1)s.raf=requestAnimationFrame(tick);else s.raf=null;}
+    icon.addEventListener('mouseenter',function(){var r=icon.getBoundingClientRect();var t=getComputedStyle(icon).transform;var m=(t&&t!=='none')?new DOMMatrix(t):new DOMMatrix();s.origCx=r.left+r.width/2-m.m41;s.origCy=r.top+r.height/2-m.m42;s.following=true;icon.style.transition='none';icon.style.cursor='grabbing';if(!s.raf)s.raf=requestAnimationFrame(tick);});
+    icon.addEventListener('mouseleave',function(){s.following=false;icon.style.cursor='grab';});
+    document.addEventListener('mousemove',function(e){if(!s.following)return;s.tx=e.clientX-s.origCx;s.ty=e.clientY-s.origCy;});
+  });
+  var ft=document.querySelector('footer');
+  if(ft)ft.addEventListener('mouseleave',function(){items.forEach(function(it){it.s.following=false;it.s.tx=0;it.s.ty=0;it.s.cx=0;it.s.cy=0;it.icon.style.cursor='grab';it.icon.style.transition='transform .7s cubic-bezier(.34,1.56,.64,1)';it.icon.style.transform='translate(0,0)';if(it.s.raf){cancelAnimationFrame(it.s.raf);it.s.raf=null;}});});
+})();
+</script>
+</body>
+</html>

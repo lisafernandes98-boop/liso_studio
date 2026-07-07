@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Home — Liso Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--bg:#F0F0EB;--black:#111;--pink:#F9BFDC;--lime:#C8F55A;--border:transparent}
+body{color:var(--black);font-family:'Syne',sans-serif;overflow-x:hidden}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:flex-start;gap:40px;padding:0 40px;height:120px}
+.nav-logo{height:32px;display:block;text-decoration:none;flex-shrink:0}
+.nav-logo svg{height:32px;width:auto}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:inherit;text-decoration:none;padding:8px 24px;border-radius:100px}
+.nav-links a:hover{opacity:.6}
+.burger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.burger span{display:block;width:22px;height:2px;background:var(--black);border-radius:2px}
+
+/* MOBILE MENU */
+.mob{display:none;position:fixed;inset:0;z-index:400;background:var(--black);flex-direction:column}
+.mob.open{display:flex}
+.mob-head{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:#fff;flex-shrink:0}
+.mob-head svg{height:36px;width:auto}
+.mob-x{background:none;border:none;font-size:22px;font-weight:700;cursor:pointer;color:var(--black)}
+.mob-nav{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 40px}
+.mob-nav a{font-family:'Syne Mono',monospace;font-size:28px;color:#fff;text-decoration:none;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.1);display:block}
+.mob-nav a span{border-bottom:2px solid #fff;padding-bottom:2px}
+
+/* FOOTER */
+footer{background:var(--black);padding:28px 48px 40px}
+.ft-disc{margin-bottom:0;overflow:hidden}
+.ft-run{display:inline-block;animation:ftScroll 42s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(16px,2.4vw,38px);letter-spacing:.04em;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+.ft-line{overflow:hidden;white-space:nowrap}
+@keyframes ftScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ft-copy{font-family:'Syne Mono',monospace;font-size:10px;color:var(--lime);text-align:center;margin-top:20px;letter-spacing:.05em;opacity:.7}
+.ft-logo{display:flex;justify-content:center;margin:20px 0 16px}
+.ft-logo img{height:44px;width:auto}
+.ft-soc{display:flex;justify-content:center;gap:12px}
+.soc{width:40px;height:40px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.soc img{width:40px;height:40px;object-fit:contain;display:block}
+
+
+@media(max-width:768px){
+  .nav-links{display:none}
+  .burger{display:flex}
+  footer{padding:24px 20px 32px}
+  .ft-disc p{font-size:10px}
+}
+
+body{background:var(--bg)}
+
+/* FLOATING NAV */
+.float-nav{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;gap:20px;align-items:center}
+.float-nav a{font-family:'Syne Mono',monospace;font-size:13px;color:var(--black);text-decoration:none;line-height:1;display:block;opacity:.8;transition:opacity .2s}
+.float-nav a:hover{opacity:1}
+@media(max-width:768px){.float-nav{display:none}}
+
+
+/* VIDEO HERO */
+.hero{position:relative;width:100%;min-height:100vh;background:#000;overflow:visible}
+.hero video{width:100%;height:100vh;object-fit:cover;display:block;position:relative;z-index:1}
+.hero-disc{position:absolute;top:120px;left:0;right:0;overflow:hidden;pointer-events:none;z-index:2}
+.disc-line{white-space:nowrap;overflow:hidden;line-height:1.85}
+.disc-run{display:inline-block;animation:discScroll 75s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(11px,1.65vw,24px);letter-spacing:.06em;text-transform:uppercase;color:#fff;font-weight:400}
+@keyframes discScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.arc-bridge{position:absolute;bottom:-35px;left:0;right:0;z-index:5;pointer-events:none;overflow:visible}
+/* WORK SECTION */
+.work{position:relative;min-height:95vh;display:flex;align-items:center;justify-content:center;overflow:visible;background:#fff url('assets/fondmywork.jpg') center/cover no-repeat}
+.stk{position:absolute;will-change:transform;user-select:none;cursor:pointer;z-index:5}
+.wtitle{position:relative;z-index:10;text-align:center;pointer-events:auto}
+.wlink{display:block;text-decoration:none;color:var(--black)}
+.wl{display:block;width:fit-content;position:relative;font-family:'Syne Mono',monospace;font-size:clamp(38px,6.5vw,84px);font-weight:400;letter-spacing:-.02em;line-height:1.15;margin:0 auto}
+.wl::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:2.5px;background:var(--black);border-radius:2px;transform:scaleX(0);transform-origin:left;transition:transform .3s ease}
+.wlink:hover .wl::after{transform:scaleX(1)}
+/* ABOUT */
+.about-sec{background:var(--pink);padding:96px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:32px}
+.about-t{font-family:'Syne Mono',monospace;font-size:clamp(36px,6vw,88px);font-weight:400;letter-spacing:-.02em}
+.about-btn{font-family:'Syne Mono',monospace;font-size:16px;color:#fff;background:var(--black);padding:18px 64px;border-radius:100px;text-decoration:none;transition:background .25s,color .25s,border .25s;border:2px solid var(--black)}
+.about-btn:hover{background:#fff;color:var(--black)}
+@media(max-width:768px){
+  .stk{display:none}.arc{display:none}.hero-disc{display:none}
+  .hero video{height:auto}
+  .work{min-height:auto;padding:56px 24px}
+  .wl{font-size:clamp(34px,9vw,52px)}
+  .about-sec{padding:64px 24px}
+}
+
+
+/* About photo clusters */
+.about-sec{position:relative;overflow:hidden}
+.photo-card{position:absolute;top:50%;width:460px;pointer-events:none;opacity:0;transform:translateY(calc(-50% + 80px));transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.photo-card img{width:100%;height:auto;display:block}
+.about-sec:has(.about-btn:hover) .photo-card{opacity:1;transform:translateY(-50%)}
+.about-sec:has(.about-btn:hover) .pc-d0{transition-delay:0s}
+.about-sec:has(.about-btn:hover) .pc-d1{transition-delay:.07s}
+.about-sec:has(.about-btn:hover) .pc-d2{transition-delay:.14s}
+@media(max-width:768px){.photo-card{display:none}}
+.vlib-btn{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.5vw,18px);color:#111;background:transparent;border:2px solid #111;border-radius:100px;padding:14px 56px;text-decoration:none;display:inline-block;position:relative;z-index:2;transition:background .25s,color .25s;letter-spacing:.02em}
+.vlib-btn:hover{background:#111;color:#C8F55A}
+</style>
+</head>
+<body>
+
+<nav class="float-nav" aria-label="Quick navigation">
+  <a href="work.html" title="my work">°*✶.</a>
+  <a href="about.html" title="about">₊˚౨ৎ˚</a>
+</nav>
+<div class="mob" id="mob">
+  <div class="mob-head"><svg width="100" height="65" viewBox="0 0 135 88" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M38.9214 21.4081C41.0735 20.4273 43.6554 20.5237 45.9765 21.419C48.2977 22.3144 50.3158 23.9927 51.3514 26.1155L51.5874 26.5992L51.9483 26.2003C55.2762 22.5161 61.3961 20.2101 66.3288 20.2641C67.3885 20.2757 68.3816 20.4777 69.4986 20.587L69.688 20.6056L69.8109 20.4609C69.889 20.3693 69.9702 20.2789 70.0525 20.1897L70.0514 20.189C71.3182 18.8247 73.5014 17.7579 75.3412 17.4506C75.7466 17.3831 76.1593 17.3411 76.5849 17.2987C77.0067 17.2567 77.4423 17.214 77.8744 17.1441C87.4135 15.6018 97.045 17.4778 104.287 24.2507L104.549 24.4956L104.797 24.2367C105.008 24.0164 105.178 23.7332 105.308 23.5449L105.308 23.5439C110.105 16.6302 120.86 17.3964 125.289 24.4831C126.915 27.116 127.431 30.2852 126.725 33.2986C126.036 36.1874 124.22 38.682 121.681 40.2258L121.678 40.2277C119.579 41.5301 116.737 42.1478 114.278 41.9045C113.329 41.8106 112.532 41.609 111.575 41.3844L111.149 41.2845L111.128 41.7207C111.068 42.9431 110.661 44.7283 110.265 45.9135C108.552 50.939 104.916 55.0825 100.152 57.4364C95.9754 59.495 91.1534 59.8185 86.7402 58.3365L86.3458 58.2034L86.268 58.6128C86.1638 59.159 86.0751 59.6607 85.9306 60.1686L85.9304 60.1716C85.5491 61.5495 84.9828 62.8686 84.2475 64.0933L83.9216 64.6122C81.155 68.7896 76.6546 71.4838 71.8079 72.5841L71.3379 72.6854C65.7438 73.8308 60.1955 72.3036 55.5215 69.101C55.1321 68.8342 54.6767 68.4899 54.258 68.212L54.0922 68.1015L53.9105 68.1828C52.5569 68.7803 51.3815 69.0835 50.2024 69.1458C49.0218 69.2082 47.8165 69.0301 46.4 68.6384L46.0434 68.5389L45.9506 68.8978C45.582 70.3321 45.2974 71.1933 44.4738 72.4111C42.9847 74.6128 40.6761 76.0604 38.0681 76.5654L38.0691 76.5651C35.4392 77.0489 32.7244 76.4767 30.5148 74.9735L30.5138 74.9737C27.9429 73.2191 26.1992 70.4655 25.5706 67.4273C25.4408 66.8 25.3449 66.1492 25.2494 65.485C25.1543 64.8243 25.0603 64.1488 24.9345 63.4896L24.8088 62.8311L24.3248 63.2961C19.6005 67.8391 12.1028 66.8792 8.59802 61.265C7.92346 60.1844 7.69263 59.1524 7.33094 57.8675C6.71806 55.6899 6.38807 53.5411 6.99166 51.393L6.99258 51.3887C8.14278 47.1175 12.066 44.0732 16.4784 43.9111C17.8026 43.8625 18.6885 44.0453 20.0133 44.3978L20.737 44.5911L20.4402 43.9032L20.0685 43.0108C18.6946 39.5716 18.0498 36.4161 19.4483 32.9506C21.4307 28.0387 27.6175 25.7251 32.4835 27.831L32.8637 27.995L32.9779 27.5974C33.8202 24.6613 36.0622 22.5126 38.9013 21.4163L38.9115 21.4126L38.9214 21.4081Z" fill="black" stroke="black" stroke-width="0.727019"/>
+<path d="M75.9655 25.2195C76.5442 25.0265 76.9891 24.9506 77.4394 24.9043C77.8906 24.8579 78.4174 24.8366 79.0514 24.7491L79.0562 24.7478C80.8412 24.4756 82.5492 24.3214 84.3513 24.3098C88.9603 24.2798 93.7048 25.7388 97.3089 28.4513C100.907 31.159 103.361 35.1079 103.439 40.0836C103.488 43.2659 101.923 46.1768 99.6487 48.4238C96.039 51.685 90.8228 52.7188 86.7924 49.7188C84.5203 48.0278 83.0803 45.4099 82.25 42.5057C81.4203 39.6033 81.2086 36.4449 81.3701 33.7199C81.3997 33.2179 81.4513 32.7018 81.5016 32.1911C81.5418 31.8681 81.6611 31.4207 81.7727 30.9138C81.8757 30.4462 81.9776 29.9051 81.918 29.5045L81.8985 29.3744L81.8002 29.2868C81.6739 29.1739 81.5106 29.1315 81.3889 29.1117C81.2554 29.0899 81.1038 29.085 80.9503 29.0888C80.6422 29.0965 80.2733 29.1419 79.9101 29.1972C79.5448 29.2527 79.1713 29.3205 78.8544 29.3781C78.5292 29.4372 78.2769 29.4822 78.1327 29.497L78.1308 29.4975C77.5847 29.5572 77.0336 29.5501 76.4895 29.4767L76.4885 29.477C75.9485 29.4046 75.4619 29.1133 75.1437 28.6715L75.1418 28.668L75.0666 28.5603C74.3398 27.4451 74.8438 26.0484 75.9655 25.2195Z" fill="white" stroke="black" stroke-width="0.727019"/>
+<path d="M87.3463 30.8091C87.4958 30.8787 87.6647 30.9827 87.8411 31.112C87.9738 31.2093 88.0998 31.3105 88.215 31.4037C88.3239 31.4918 88.4354 31.5831 88.5231 31.6438L88.5234 31.6448C88.6471 31.7305 88.79 31.7634 88.9105 31.7767C89.0353 31.7905 89.1697 31.7866 89.302 31.7734C89.5667 31.7471 89.8684 31.6798 90.1593 31.6014C90.6762 31.4619 91.2104 31.2712 91.5097 31.1678C93.1568 31.5564 94.7825 32.8357 96.0101 34.4895C97.2591 36.1724 98.0489 38.1779 98.0441 39.8836C98.0411 40.9107 97.8823 41.7342 97.5601 42.4727C97.2373 43.2127 96.7413 43.8887 96.0345 44.6097C95.3086 45.3286 94.3332 45.8901 93.3227 46.1183C92.3141 46.346 91.2917 46.2384 90.4344 45.6551C89.7026 45.1574 88.9613 44.1988 88.3561 43.1077C87.754 42.0222 87.3147 40.857 87.1603 39.9862C86.9908 39.0286 86.8183 37.0258 86.8216 35.0639C86.8233 34.0845 86.8692 33.1255 86.978 32.3194C87.0657 31.6687 87.1917 31.1544 87.3463 30.8091Z" fill="black" stroke="black" stroke-width="0.727019"/>
+<path d="M62.1175 28.6694C63.1972 28.2139 64.5886 27.9599 65.9822 27.9614C67.3778 27.963 68.7411 28.2208 69.7744 28.7569C70.5377 29.1528 70.8756 29.8743 71.0041 30.7681C71.1344 31.6753 71.0376 32.6717 70.9932 33.5487C70.9434 34.535 70.9203 35.6034 70.6434 36.5167C70.3736 37.4066 69.8791 38.0958 68.9044 38.3861L68.8987 38.3876C68.4293 38.5356 68.0254 38.5124 67.6834 38.3838C67.3371 38.2537 67.0315 38.0065 66.7808 37.6739C66.2739 37.0015 66.0274 36.0238 66.1318 35.1698C66.2029 34.5878 66.2611 34.1159 66.2629 33.7642C66.2646 33.4383 66.2244 33.0612 65.9338 32.8375C65.7893 32.7264 65.6204 32.6836 65.4576 32.6731C65.2973 32.6628 65.1204 32.6831 64.9335 32.7177C64.5617 32.7867 64.0691 32.9315 63.4482 33.1176C61.8154 33.607 60.3253 34.8889 59.5802 36.4831C58.956 37.819 58.9045 39.7765 59.3908 41.2625L59.4952 41.5533C59.8885 42.5631 60.5621 43.4397 61.4369 44.0795C62.8145 45.1034 64.9735 45.8188 67.1224 46.4606C69.3072 47.1131 71.4927 47.6931 73.0411 48.4365L73.0489 48.4395C75.3234 49.4674 77.3701 50.86 78.2122 53.2148C79.9853 58.1756 76.8847 62.6001 72.1471 64.3637C70.2765 65.06 68.664 65.361 67.0842 65.2945C65.7012 65.2362 64.3245 64.8952 62.8027 64.2684L62.1418 63.9822C58.8029 62.3807 55.5791 59.4369 54.3182 55.9373C54.0704 55.2494 53.8189 54.362 53.7123 53.4825C53.6046 52.594 53.6507 51.7632 53.9465 51.1526C54.1559 50.7208 54.5075 50.3998 54.9561 50.2624C55.6039 50.064 56.4155 50.0982 57.0118 50.3879C57.5881 50.668 57.8786 51.256 58.0782 52.048C58.177 52.4404 58.2459 52.8501 58.3253 53.2701C58.4029 53.6805 58.4909 54.1012 58.6259 54.4724C59.3772 56.5393 61.1016 58.1857 62.9684 59.2097L63.3439 59.4061C65.3912 60.4378 68.0117 60.9152 70.2843 60.1518C71.1814 59.8504 72.2772 59.1903 73.064 58.3323C73.8469 57.4783 74.3897 56.3474 73.9734 55.1491C73.8064 54.6688 73.4528 54.2663 73.0781 53.9441C72.6995 53.6186 72.27 53.3497 71.9113 53.1441C70.5764 52.379 69.1303 51.6658 67.616 51.237L67.617 51.2368C66.4711 50.9009 65.2759 50.6454 64.1382 50.3583C62.9886 50.0682 61.8729 49.7414 60.8249 49.2535C58.2791 48.0684 56.2188 45.7173 55.2534 43.0738C54.1893 40.1603 54.2758 37.0018 55.5775 34.1817C56.8188 31.4925 59.2989 29.6793 62.0993 28.6771L62.1085 28.6737L62.1175 28.6694Z" fill="white" stroke="black" stroke-width="0.727019"/>
+<path d="M27.5714 34.8977C28.2959 34.6818 29.1591 34.7099 29.8414 35.0173C30.0713 35.1209 30.2568 35.3263 30.4184 35.6186C30.4998 35.7659 30.5697 35.9255 30.6341 36.0904L30.8161 36.5961C33.6916 45.121 35.9653 53.8371 37.6196 62.6805C37.7385 63.32 37.9316 64.0002 38.0928 64.6371C38.2573 65.2869 38.3918 65.9026 38.417 66.4657C38.442 67.0258 38.3568 67.5037 38.1111 67.8973C37.8707 68.2822 37.4485 68.6287 36.7128 68.8839C35.7402 69.0272 35.0492 68.7854 34.5286 68.3276C33.9853 67.8496 33.594 67.1076 33.3041 66.2111C33.0155 65.3188 32.839 64.3115 32.6998 63.3373C32.5629 62.379 32.459 61.4279 32.3184 60.7095C31.678 57.4365 31.3033 54.0257 30.4374 50.731L30.2575 50.0734C30.1386 49.5126 30.0079 49.0052 29.905 48.467C29.269 45.1399 27.9175 42.0229 26.8508 38.9055C26.5628 38.064 26.3448 37.2615 26.4042 36.5639C26.4595 35.9146 26.7563 35.3358 27.5714 34.8977Z" fill="white" stroke="black" stroke-width="0.727019"/>
+<path d="M42.1003 35.8143C43.3116 35.409 44.6125 36.1049 44.959 37.33C45.2775 38.4748 45.4508 39.6463 45.6029 40.8451C45.7542 42.0372 45.8858 43.265 46.1203 44.4837C46.9779 48.9411 49.2923 52.6651 51.1824 56.5896C51.6858 57.6348 52.0515 58.5178 52.0249 59.2728C52.0122 59.6342 51.9089 59.9641 51.677 60.2725C51.4429 60.5835 51.0634 60.8904 50.4709 61.1791C50.2573 61.2541 49.9835 61.3306 49.7182 61.3655C49.4316 61.4032 49.2128 61.3847 49.0841 61.3236C48.7342 61.1576 48.3525 60.8192 47.9572 60.3429C47.5663 59.8717 47.1832 59.2921 46.8224 58.6793C46.1 57.4523 45.4904 56.1317 45.101 55.3346L45.1019 55.3344C42.917 50.8294 41.5338 45.9727 40.8571 41.0081C40.7029 39.8774 40.4834 38.8196 40.5825 37.8878C40.6306 37.4355 40.7528 37.0367 40.9845 36.6956C41.2127 36.3599 41.5621 36.0568 42.1003 35.8143Z" fill="white" stroke="black" stroke-width="0.727019"/>
+<path d="M113.2 26.6573C115.71 25.8524 117.87 27.077 118.797 28.802C119.262 29.6664 119.408 30.6414 119.149 31.5404C118.892 32.4291 118.226 33.2839 116.988 33.9042C114.827 34.649 112.444 33.8479 111.371 31.8544L111.27 31.6574C110.853 30.7779 110.797 29.7689 111.116 28.849C111.479 27.8331 112.209 27.1347 113.2 26.6573Z" fill="white" stroke="black" stroke-width="0.727019"/>
+<path d="M16.1338 51.6692C16.8098 51.5075 17.3621 51.6064 17.8121 51.86C18.2744 52.1207 18.6561 52.561 18.9434 53.1159C19.523 54.2354 19.6723 55.7309 19.3939 56.8192C19.2104 57.5359 18.7289 57.968 18.0199 58.3412C17.4859 58.4605 16.8543 58.398 16.3084 58.158C15.7507 57.9128 15.3193 57.5025 15.1498 56.9686C14.7874 55.8267 14.4106 54.7334 14.446 53.7877C14.4632 53.33 14.5784 52.9279 14.8295 52.5821C15.0789 52.2389 15.4844 51.922 16.1338 51.6692Z" fill="white" stroke="black" stroke-width="0.727019"/>
+<path d="M41.8168 28.5337C42.3987 28.4428 42.9559 28.4603 43.4203 28.6268C43.8822 28.7924 44.268 29.1093 44.5109 29.6583C44.717 30.1256 44.7236 30.6571 44.5288 31.1292L44.5283 31.1314C44.2775 31.7498 43.861 32.0652 43.2134 32.3466C42.5502 32.495 42.0203 32.5087 41.4399 32.244L41.4375 32.2426L41.2587 32.1516C40.8548 31.9199 40.5436 31.5515 40.3834 31.1099L40.3831 31.1089L40.3074 30.8703C40.1649 30.3267 40.251 29.8822 40.4718 29.5237C40.7285 29.1072 41.195 28.7644 41.8168 28.5337Z" fill="white" stroke="black" stroke-width="0.727019"/>
+</svg><button class="mob-x" id="mobX">✕</button></div>
+  <div class="mob-nav">
+    <a href="index.html"><span>home ⌂*✿:·</span></a>
+    <a href="work.html"><span>my work °*✶.</span></a>
+    <a href="about.html"><span>about ₊˚౨ৎ˚</span></a>
+  </div>
+</div>
+
+<section class="hero" id="heroSec">
+<header style="position:absolute;top:0;left:0;right:0;z-index:300;background:transparent;">
+  <div class="nav">
+    <a href="index.html" class="nav-logo" >
+      <img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:60px;width:auto;display:block">
+    </a>
+    <div class="nav-links" style="color:#fff">
+      <a href="index.html">home ⌂*✿:·</a>
+      <a href="work.html">my work °*✶.</a>
+      <a href="about.html">about ₊˚౨ৎ˚</a>
+    </div>
+    <button class="burger" id="mobOpen"><span></span><span></span></button>
+  </div>
+</header>
+  <div class="hero-disc">
+    <div class="disc-line"><span class="disc-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
+    <div class="disc-line"><span class="disc-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  </div>
+  <video id="heroVid" autoplay muted playsinline loop preload="auto">
+    <source src="assets/videos/video%20hero%20HP.mp4?v=7" type="video/mp4">
+  </video>
+
+<div class="arc-bridge">
+  <svg viewBox="0 0 1440 185" preserveAspectRatio="none" style="display:block;width:100%;overflow:visible">
+    <defs><path id="ap" d="M -80,90 Q 200,0 480,90 Q 760,180 1040,90 Q 1320,0 1600,90"/></defs>
+    <text font-family="'Syne Mono',monospace" font-size="76" letter-spacing="8" fill="#fff" id="arcText">
+      <textPath id="arcTp" href="#ap" startOffset="0%">*lisostudio *lisostudio *lisostudio *lisostudio *lisostudio *lisostudio *lisostudio *lisostudio</textPath>
+    </text>
+  </svg>
+</div>
+</section>
+
+<section class="work" id="workSec">
+  <div class="stk" id="s0" data-href="headz.html" style="top:18%;left:18%;transform:rotate(-8deg) scale(2.6)"><img src="assets/Logos%20B/logo%20headz%20b.png" data-png="assets/Logos%20B/logo%20headz%20b.png" data-gif="assets/headz!%20gif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s1" data-href="claws.html" style="top:12%;left:48%;transform:rotate(-2deg) scale(2.0)"><img src="assets/Logos%20B/logo%20claws%20b.png" data-png="assets/Logos%20B/logo%20claws%20b.png" data-gif="assets/gif%20claws%20logo.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s5" data-href="breakleague.html" style="top:10%;right:16%;transform:rotate(4deg) scale(1.8)"><img src="assets/Logos%20B/logo%20break%20league%20b.png" data-png="assets/Logos%20B/logo%20break%20league%20b.png" data-gif="assets/breakleaguegif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s2" data-href="topo.html" style="top:32%;right:15%;transform:rotate(-3deg) scale(2.2)"><img src="assets/Logos%20B/logo%20topo%20b.png" data-png="assets/Logos%20B/logo%20topo%20b.png" data-gif="assets/topogif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s7" data-href="jobexpresso.html" style="top:54%;right:15%;transform:rotate(2deg) scale(2.1)"><img src="assets/Logos%20B/logo%20job%20expresso%20b.png" data-png="assets/Logos%20B/logo%20job%20expresso%20b.png" data-gif="assets/jobxgif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s8" data-href="liso.html" style="bottom:18%;right:32%;transform:rotate(-4deg) scale(2.0)"><img src="assets/Logos%20B/logo%20liso%20b.png" data-png="assets/Logos%20B/logo%20liso%20b.png" data-gif="assets/lisogif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s4" data-href="benji.html" style="bottom:8%;left:36%;transform:rotate(-6deg) scale(2.4)"><img src="assets/Logos%20B/logo%20benji%20b.png" data-png="assets/Logos%20B/logo%20benji%20b.png" data-gif="assets/benji%20gif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+  <div class="stk" id="s3" data-href="smiirl.html" style="top:44%;left:16%;transform:rotate(3deg) scale(2.1)"><img src="assets/Logos%20B/logo%20smiirl%20b.png" data-png="assets/Logos%20B/logo%20smiirl%20b.png" data-gif="assets/smiirlgif.gif" style="width:140px;height:140px;object-fit:contain;display:block" alt="" class="stk-img"></div>
+
+
+  <!-- char doodles -->
+  <div class="wtitle"><a href="work.html" class="wlink"><span class="wl">discover</span><span class="wl">my work ✶*. °</span></a></div>
+</section>
+<section class="about-sec">
+  <div class="photo-card pc-d0" style="left:3%;z-index:2"><img src="assets/left.png" alt=""></div>
+  <div class="photo-card pc-d0" style="right:3%;top:calc(50% + 45px);z-index:2"><img src="assets/right.png" alt=""></div>
+  <h2 class="about-t">about liso°౨ৎ°</h2>
+  <a href="about.html" class="about-btn">who is she?</a>
+</section>
+
+<section id="vlib-cta" style="background:#C8F55A;padding:32px 48px;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden">
+  <video id="vlib-cta-vid" muted loop playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;pointer-events:none">
+    <source src="assets/videos/video%20my%20work%20background.mp4" type="video/mp4">
+  </video>
+  <a href="videotheque.html" class="vlib-btn">la vidéothèque</a>
+</section>
+
+<footer>
+  <div class="ft-disc">
+    <div class="ft-line"><span class="ft-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
+    <div class="ft-line"><span class="ft-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  </div>
+  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:44px;width:auto"></div>
+  <div class="ft-soc" id="ftSoc">
+    <a href="https://www.behance.net/lfnds" target="_blank" class="soc"><img src="assets/icons/Behance/lime.png" alt="Behance" draggable="false"></a>
+    <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc"><img src="assets/icons/Pinterest/lime.png" alt="Pinterest" draggable="false"></a>
+    <a href="https://www.linkedin.com" target="_blank" class="soc"><img src="assets/icons/LinkedIN/lime.png" alt="LinkedIn" draggable="false"></a>
+  </div>
+
+  <p class="ft-copy">lisostudio® 2026</p>
+</footer>
+<script>
+const mob=document.getElementById('mob');
+if(mob){
+  document.getElementById('mobOpen').onclick=()=>{mob.classList.add('open');document.body.style.overflow='hidden'};
+  document.getElementById('mobX').onclick=()=>{mob.classList.remove('open');document.body.style.overflow=''};
+}
+
+
+const vid=document.getElementById('heroVid');
+new IntersectionObserver(e=>{e[0].isIntersecting?vid.play().catch(()=>{}):vid.pause()},{threshold:.1}).observe(document.getElementById('heroSec'));
+// Logos section work — hover = GIF swap / clic+drag = grab-and-stay
+(function(){
+  var ws=document.getElementById('workSec');
+  var items=[];
+  document.querySelectorAll('.stk').forEach(function(stk){
+    var img=stk.querySelector('.stk-img');
+    var baseT=stk.style.transform;
+    var s={following:false,origCx:0,origCy:0,tx:0,ty:0,cx:0,cy:0,raf:null};
+    items.push({stk:stk,s:s,base:baseT});
+    if(img){var g=new Image();g.src=img.dataset.gif;}
+    stk.style.cursor='grab';
+
+    function tick(){
+      s.cx+=(s.tx-s.cx)*0.12;s.cy+=(s.ty-s.cy)*0.12;
+      stk.style.transform=baseT+' translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';
+      if(s.following||Math.abs(s.tx-s.cx)>0.1||Math.abs(s.ty-s.cy)>0.1)s.raf=requestAnimationFrame(tick);else s.raf=null;
+    }
+
+    // Hover — GIF swap uniquement
+    stk.addEventListener('mouseenter',function(){ if(img)img.src=img.dataset.gif; });
+    stk.addEventListener('mouseleave',function(){ if(!s.following&&img)img.src=img.dataset.png; });
+
+    // Clic+drag — détecter si c'est un vrai clic ou un drag
+    var downX=0,downY=0,dragged=false;
+    stk.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      downX=e.clientX;downY=e.clientY;dragged=false;
+      var r=stk.getBoundingClientRect();
+      var t=getComputedStyle(stk).transform;
+      var m=(t&&t!=='none')?new DOMMatrix(t):new DOMMatrix();
+      s.origCx=r.left+r.width/2-m.m41;s.origCy=r.top+r.height/2-m.m42;
+      s.following=true;stk.style.transition='none';
+      if(!s.raf)s.raf=requestAnimationFrame(tick);
+    });
+
+    document.addEventListener('mouseup',function(e){
+      if(!s.following)return;
+      s.following=false;
+      var dist=Math.sqrt(Math.pow(e.clientX-downX,2)+Math.pow(e.clientY-downY,2));
+      if(dist<6){
+        // vrai clic → ouvrir dans un nouvel onglet
+        var href=stk.dataset.href;
+        if(href)window.open(href,'_blank');
+      }
+      stk.style.cursor='grab';
+      if(img)img.src=img.dataset.png;
+    });
+
+    document.addEventListener('mousemove',function(e){
+      if(!s.following)return;
+      var dist=Math.sqrt(Math.pow(e.clientX-downX,2)+Math.pow(e.clientY-downY,2));
+      if(dist>6){dragged=true;stk.style.cursor='grabbing';}
+      s.tx=e.clientX-s.origCx;s.ty=e.clientY-s.origCy;
+    });
+  });
+
+  if(ws)ws.addEventListener('mouseleave',function(){
+    items.forEach(function(it){
+      it.s.following=false;it.s.tx=0;it.s.ty=0;it.s.cx=0;it.s.cy=0;
+      it.stk.style.cursor='grab';
+      it.stk.style.transition='transform .7s cubic-bezier(.34,1.56,.64,1)';
+      it.stk.style.transform=it.base+' translate(0,0)';
+      if(it.s.raf){cancelAnimationFrame(it.s.raf);it.s.raf=null;}
+    });
+  });
+})();
+
+// Arc marquee animation
+(function(){
+  var tp=document.getElementById('arcTp');
+  if(!tp)return;
+  var off=0;
+  function tick(){
+    off-=0.014;
+    if(off<-50)off+=50;
+    tp.setAttribute('startOffset',off+'%');
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+
+
+// *lisostudio* arc — video color sampling
+(function(){
+  var video = document.getElementById('heroVid');
+  var arcText = document.getElementById('arcText');
+  if(!video || !arcText) return;
+
+  var canvas = document.createElement('canvas');
+  var ctx = canvas.getContext('2d', {willReadFrequently: true});
+  canvas.width = 80;
+  canvas.height = 60;
+
+  var currentColor = [255,255,255];
+  var targetColor  = [255,255,255];
+
+  // Elements to colorise
+  var discRuns  = document.querySelectorAll('.disc-run');
+  var navLinks  = document.querySelectorAll('.nav-links a');
+
+  function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
+
+
+  function sampleColor(){
+    if(video.readyState < 2 || !video.videoWidth) return;
+    try {
+      ctx.drawImage(video, 0, 0, 80, 60);
+      // Sample full frame center for nav/disc, lower area for arc
+      var d = ctx.getImageData(10, 5, 60, 50).data;
+      var r=0,g=0,b=0,n=0;
+      for(var i=0;i<d.length;i+=8){ r+=d[i];g+=d[i+1];b+=d[i+2];n++; }
+      if(!n) return;
+      r=r/n; g=g/n; b=b/n;
+
+      // Boost saturation
+      var mid=(Math.max(r,g,b)+Math.min(r,g,b))/2;
+      var sat=1.7;
+      r=Math.min(255,Math.max(0,mid+(r-mid)*sat));
+      g=Math.min(255,Math.max(0,mid+(g-mid)*sat));
+      b=Math.min(255,Math.max(0,mid+(b-mid)*sat));
+
+      // Ensure readable brightness
+      var lum=0.299*r+0.587*g+0.114*b;
+      if(lum<100){ var boost=100/Math.max(1,lum); r=Math.min(255,r*boost);g=Math.min(255,g*boost);b=Math.min(255,b*boost); }
+
+      targetColor=[Math.round(r),Math.round(g),Math.round(b)];
+    } catch(e){}
+  }
+
+  function animateColor(){
+    currentColor=[
+      lerp(currentColor[0],targetColor[0],0.10),
+      lerp(currentColor[1],targetColor[1],0.10),
+      lerp(currentColor[2],targetColor[2],0.10)
+    ];
+    var rgb='rgb('+currentColor[0]+','+currentColor[1]+','+currentColor[2]+')';
+
+    // Arc *lisostudio*
+    arcText.setAttribute('fill', rgb);
+
+    // Disc bar 2 lines
+    discRuns.forEach(function(el){ el.style.color = rgb; });
+
+    // Nav links
+    navLinks.forEach(function(el){ el.style.color = rgb; });
+
+
+    requestAnimationFrame(animateColor);
+  }
+
+  setInterval(sampleColor, 200);
+  video.addEventListener('loadeddata', sampleColor);
+  animateColor();
+})();
+
+
+// Side nav section-aware color
+(function(){
+  var fn = document.querySelector('.float-nav');
+  if(!fn) return;
+  var sections = [
+    { el: document.getElementById('heroSec'),   color:'#fff' },
+    { el: document.getElementById('workSec'),   color:'#111' },
+    { el: document.querySelector('.about-sec'), color:'#111' },
+    { el: document.querySelector('footer'),     color:'#C8F55A' },
+  ];
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var s = sections.find(function(x){ return x.el === e.target; });
+        if(s) fn.querySelectorAll('a').forEach(function(a){ a.style.color = s.color; });
+      }
+    });
+  }, {threshold: 0.4});
+  sections.forEach(function(s){ if(s.el) obs.observe(s.el); });
+})();
+
+
+// Footer icons — smooth lerp follow, stay on leave, reset on footer exit
+(function(){
+  var items = [];
+  document.querySelectorAll('.ft-soc .soc').forEach(function(icon){
+    var s = { following: false, origCx: 0, origCy: 0, tx: 0, ty: 0, cx: 0, cy: 0, raf: null };
+    items.push({ icon: icon, s: s });
+    icon.style.cursor = 'grab';
+
+    function tick() {
+      s.cx += (s.tx - s.cx) * 0.12;
+      s.cy += (s.ty - s.cy) * 0.12;
+      icon.style.transform = 'translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';
+      if (s.following || Math.abs(s.tx - s.cx) > 0.1 || Math.abs(s.ty - s.cy) > 0.1) {
+        s.raf = requestAnimationFrame(tick);
+      } else {
+        s.raf = null;
+      }
+    }
+
+    icon.addEventListener('mouseenter', function(){
+      var r = icon.getBoundingClientRect();
+      var t = getComputedStyle(icon).transform;
+      var m = (t && t !== 'none') ? new DOMMatrix(t) : new DOMMatrix();
+      s.origCx = r.left + r.width/2 - m.m41;
+      s.origCy = r.top  + r.height/2 - m.m42;
+      s.following = true;
+      icon.style.transition = 'none';
+      icon.style.cursor = 'grabbing';
+      if (!s.raf) s.raf = requestAnimationFrame(tick);
+    });
+
+    icon.addEventListener('mouseleave', function(){
+      s.following = false;
+      icon.style.cursor = 'grab';
+    });
+
+    document.addEventListener('mousemove', function(e){
+      if (!s.following) return;
+      s.tx = e.clientX - s.origCx;
+      s.ty = e.clientY - s.origCy;
+    });
+  });
+
+  var ft = document.querySelector('footer');
+  if (ft) ft.addEventListener('mouseleave', function(){
+    items.forEach(function(it){
+      it.s.following = false;
+      it.s.tx = 0; it.s.ty = 0;
+      it.icon.style.cursor = 'grab';
+      it.icon.style.transition = 'transform .7s cubic-bezier(.34,1.56,.64,1)';
+      it.icon.style.transform = 'translate(0,0)';
+      it.s.cx = 0; it.s.cy = 0;
+      if (it.s.raf) { cancelAnimationFrame(it.s.raf); it.s.raf = null; }
+    });
+  });
+})();
+
+// Vidéothèque CTA — video reveal on hover
+(function(){
+  var sec=document.getElementById('vlib-cta');
+  var vid=document.getElementById('vlib-cta-vid');
+  if(!sec||!vid)return;
+  vid.load();
+  sec.addEventListener('mouseenter',function(){vid.play().catch(function(){});vid.style.opacity='1';});
+  sec.addEventListener('mouseleave',function(){vid.style.opacity='0';});
+})();
+
+</script>
+</body>
+</html>

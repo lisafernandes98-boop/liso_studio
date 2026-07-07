@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smiirl — Liso Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--bg:#F0F0EB;--black:#111;--pink:#F9BFDC;--lime:#C8F55A;--border:transparent}
+body{color:var(--black);font-family:'Syne',sans-serif;overflow-x:hidden;background:#fff}
+.nav{display:flex;align-items:center;justify-content:flex-start;gap:40px;padding:0 40px;height:120px}
+.nav-logo{height:32px;display:block;text-decoration:none;flex-shrink:0}
+.nav-logo svg{height:32px;width:auto}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:var(--black);text-decoration:none;padding:8px 24px;border-radius:100px}
+.nav-links a:hover{color:#fff}
+.burger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.burger span{display:block;width:22px;height:2px;background:var(--black);border-radius:2px}
+.mob{display:none;position:fixed;inset:0;z-index:400;background:var(--black);flex-direction:column}
+.mob.open{display:flex}
+.mob-head{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:#fff;flex-shrink:0}
+.mob-head svg{height:36px;width:auto}
+.mob-x{background:none;border:none;font-size:22px;font-weight:700;cursor:pointer;color:var(--black)}
+.mob-nav{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 40px}
+.mob-nav a{font-family:'Syne Mono',monospace;font-size:28px;color:#fff;text-decoration:none;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.1);display:block}
+.mob-nav a span{border-bottom:2px solid #fff;padding-bottom:2px}
+header{background:transparent}
+.proj-img{width:100%;display:block}
+.proj-img-placeholder{width:100%;aspect-ratio:16/9;background:#f5f5f5;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--border)}
+.proj-img-placeholder span{font-family:'Syne Mono',monospace;font-size:12px;color:#aaa;letter-spacing:.1em}
+.proj-fullvid{width:100%;display:block;border-bottom:1px solid var(--border)}
+.editorial-block{background:#fff;padding:80px 120px;border-bottom:1px solid var(--border)}
+.editorial-text{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.4vw,20px);line-height:1.9;color:var(--black);max-width:820px;margin:0 auto}
+.editorial-text p{margin-bottom:1.4em}
+.editorial-text p:last-child{margin-bottom:0}
+@media(max-width:768px){.editorial-block{padding:48px 24px}}
+.proj-nav{display:grid;grid-template-columns:1fr 1fr;padding-top:96px}
+.pnav{padding:20px 48px;text-decoration:none;color:var(--black);display:flex;flex-direction:row;align-items:center;gap:10px;position:relative}
+.pnav:hover{opacity:.65}
+.pnav--right{flex-direction:row-reverse;justify-content:flex-start}
+.pnav-lbl{font-family:'Syne Mono',monospace;font-size:clamp(14px,1.3vw,20px);font-weight:700;color:var(--black);display:block;line-height:1;flex-shrink:0}
+.pnav-icon{width:72px;height:72px;object-fit:contain;display:block;opacity:.7;transform:translateY(0) rotate(-4deg);transition:opacity .2s,transform .3s cubic-bezier(.22,1,.36,1);position:absolute;top:-80px;left:48px}
+.pnav--right .pnav-icon{transform:translateY(6px) rotate(4deg);left:auto;right:48px}
+.pnav:hover .pnav-icon{opacity:1;transform:translateY(0) rotate(-2deg)}
+.pnav--right:hover .pnav-icon{opacity:1;transform:translateY(0) rotate(2deg)}
+.pnav-name{font-family:'Syne Mono',monospace;font-size:clamp(13px,1.3vw,18px);font-weight:400;letter-spacing:.01em;line-height:1;color:var(--black)}
+footer{background:var(--black);padding:28px 48px 40px}
+.ft-disc{margin-bottom:0;overflow:hidden}
+.ft-run{display:inline-block;animation:ftScroll 42s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(16px,2.4vw,38px);letter-spacing:.04em;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+.ft-line{overflow:hidden;white-space:nowrap}
+@keyframes ftScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ft-copy{font-family:'Syne Mono',monospace;font-size:10px;color:var(--lime);text-align:center;margin-top:20px;letter-spacing:.05em;opacity:.7}
+.ft-logo{display:flex;justify-content:center;margin:20px 0 16px}
+.ft-logo img{height:44px;width:auto}
+.ft-soc{display:flex;justify-content:center;gap:12px}
+.soc{width:40px;height:40px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.soc img{width:40px;height:40px;object-fit:contain;display:block}
+@media(max-width:768px){
+  .nav-links{display:none}.burger{display:flex}
+  .proj-nav{grid-template-columns:1fr}
+  .pnav{padding:24px 20px;border-bottom:1px solid var(--border)}
+  .pnav--right{text-align:left;align-items:flex-start}
+  footer{padding:24px 20px 32px}
+}
+.float-nav{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;gap:20px;align-items:center}
+.float-nav a{font-family:'Syne Mono',monospace;font-size:14px;color:var(--black);text-decoration:none;line-height:1;display:block;transition:opacity .2s}
+.float-nav a:hover{opacity:.6}
+@media(max-width:768px){.float-nav{display:none}}
+
+/* Smiirl — video shoot section */
+.smiirl-shoot{background:#29DDC3;padding:0;position:relative;width:100%;aspect-ratio:2656/1494;overflow:hidden}
+.smiirl-shoot-gif{width:75%;height:100%;object-fit:contain;object-position:left center;display:block}
+.smiirl-shoot-text{position:absolute;top:50%;right:0;transform:translateY(-50%);width:42%;padding:0 6% 0 2%}
+.smiirl-shoot-text p{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.4vw,22px);line-height:1.9;color:#052C26;margin-bottom:1.4em}
+.smiirl-shoot-text p:last-child{margin-bottom:0}
+@media(max-width:900px){
+  .smiirl-shoot{aspect-ratio:auto;padding:0}
+  .smiirl-shoot-gif{width:100%;height:auto;object-position:center}
+  .smiirl-shoot-text{position:static;transform:none;width:100%;padding:40px 24px 56px}
+}
+
+/* Loutsa café — marquee banner */
+.loutsa-banner{background:#fff;overflow:hidden;padding:28px 0;border-top:none}
+.loutsa-marquee-run{display:inline-block;white-space:nowrap;animation:loutsaScroll 22s linear infinite;font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(48px,7vw,96px);letter-spacing:-.02em;text-transform:uppercase;color:#111}
+@keyframes loutsaScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* Loutsa — 3 videos */
+.loutsa-vids{background:#fff;padding:48px 48px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.loutsa-vid-wrap{position:relative;border-radius:64px;overflow:hidden;background:#000;cursor:pointer}
+.loutsa-progress{position:absolute;bottom:0;left:0;width:0%;height:3px;background:#F9BFDC;z-index:4;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:0 2px 2px 0}
+.loutsa-vid-wrap.playing .loutsa-progress{opacity:1}
+.loutsa-vid-wrap video{width:100%;display:block;border-radius:64px}
+.loutsa-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:64px;z-index:2;pointer-events:none}
+.loutsa-play span{font-family:'Syne Mono',monospace;font-size:clamp(36px,4vw,56px);color:#F9BFDC;line-height:1;user-select:none;opacity:0;transition:opacity .2s}
+.loutsa-vid-wrap:not(.playing):hover .loutsa-play span{opacity:1}
+.loutsa-vid-wrap.playing:hover .vol-bar{opacity:1}
+/* Smiirl — merci section */
+.smiirl-merci{background:#fff;padding:96px 80px;display:flex;flex-direction:row;align-items:center;gap:80px}
+.smiirl-merci-imgs{flex:0 0 40%;position:relative;min-height:760px}
+.merci-card{position:absolute;width:78%;border-radius:20px;cursor:default}
+.merci-card:first-child{top:0;left:0;transform:rotate(-4deg);z-index:2}
+.merci-card:last-child{top:58%;left:16%;transform:rotate(5deg);z-index:1}
+.merci-card img{width:100%;display:block;border-radius:20px}
+.merci-en{position:absolute;top:0;left:0;right:0;
+  background:rgba(255,255,255,.55);
+  -webkit-backdrop-filter:blur(18px) saturate(165%);
+  backdrop-filter:blur(18px) saturate(165%);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 12px 34px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.6);
+  border-radius:20px;padding:16px;opacity:0;transition:opacity .3s;display:flex;flex-direction:column;gap:10px}
+.merci-card:hover .merci-en{opacity:1}
+.merci-card{transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.merci-card:first-child:hover~.merci-card:last-child{transform:rotate(5deg) translateY(18%)}
+.merci-card:last-child:hover{transform:rotate(5deg) translateY(12%)}
+.merci-en-bubble{background:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.4);border-radius:14px;padding:12px 14px}
+.merci-en-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.merci-en-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-family:'Syne',sans-serif;font-weight:700;color:#fff}
+.merci-en-reactions{display:flex;gap:6px;margin-top:8px}
+.merci-en-react{background:#3a3a3c;border-radius:100px;padding:3px 8px;font-size:12px;color:#e5e5e7}
+.merci-en-meta{display:flex;flex-direction:column}
+.merci-en-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;line-height:1.2}
+.merci-en-time{font-family:'Syne',sans-serif;font-size:11px;color:#8e8e93}
+.merci-en-text{font-family:'Syne Mono',monospace;font-size:12.5px;color:#161616;line-height:1.6}
+.smiirl-merci-text{flex:1}
+.smiirl-merci-text p{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.4vw,20px);line-height:1.9;color:#111;margin-bottom:1.4em}
+.smiirl-merci-text p:last-child{margin-bottom:0}
+.smiirl-merci-text strong{font-weight:700}
+@media(max-width:900px){
+  .smiirl-merci{flex-direction:column;padding:60px 24px}
+  .smiirl-merci-imgs{width:100%;min-height:380px}
+  .smiirl-merci-img{width:65%}
+}
+
+/* Vidéothèque — social ad bandeau + grille */
+.socialbanner{background:#fff;overflow:hidden;padding:28px 0}
+.socialbanner-run{display:inline-block;white-space:nowrap;animation:socialScroll 28s linear infinite;font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(48px,7vw,96px);letter-spacing:-.02em;text-transform:uppercase;color:#111}
+@keyframes socialScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.vlib-grid{background:#fff;padding:0 48px 80px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.vlib-wrap{position:relative;border-radius:24px;overflow:hidden;cursor:pointer;aspect-ratio:1/1;background:#000}
+.vlib-wrap::before{content:'';position:absolute;inset:0;z-index:3;background:var(--poster) center/cover no-repeat;opacity:0;transition:opacity .4s}
+.vlib-wrap.ended::before{opacity:1}
+.vlib-wrap.rot-cover:not(.playing)::before{opacity:1}
+.vlib-wrap.rot-cover.ended::before{opacity:1}
+.vlib-wrap video{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:block;object-fit:contain}
+.vlib-progress{position:absolute;bottom:0;left:0;width:0%;height:3px;background:#F9BFDC;z-index:4;transition:opacity .3s;opacity:0;pointer-events:none;border-radius:0 2px 2px 0}
+.vlib-wrap.playing .vlib-progress{opacity:1}
+.vlib-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:24px;z-index:2;pointer-events:none}
+.vlib-play span{font-family:'Syne Mono',monospace;font-size:clamp(36px,4vw,64px);color:#F9BFDC;line-height:1;user-select:none;opacity:0;transition:opacity .2s}
+.vlib-wrap:not(.playing):hover .vlib-play span{opacity:1}
+.vol-bar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:8px;background:rgba(249,191,220,.85);backdrop-filter:blur(6px);border-radius:100px;padding:6px 14px;opacity:0;transition:opacity .2s}
+.vlib-wrap.playing:hover .vol-bar{opacity:1}
+.vol-icon{font-size:13px;color:#111;cursor:pointer;user-select:none;flex-shrink:0;line-height:1}
+.vol-range{-webkit-appearance:none;appearance:none;width:90px;height:3px;border-radius:99px;background:rgba(0,0,0,.2);outline:none;cursor:pointer}
+.vol-range::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#111;cursor:pointer}
+.vol-range::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#111;border:none;cursor:pointer}
+@media(max-width:768px){
+  .vlib-grid{grid-template-columns:1fr;padding:0 20px 60px}
+  .vlib-wrap{border-radius:20px}
+}
+
+@media(max-width:768px){
+  .loutsa-vids{grid-template-columns:1fr;padding:32px 20px 60px}
+  .loutsa-vid-wrap{border-radius:32px}
+  .loutsa-vid-wrap video{border-radius:32px}
+}
+</style>
+</head>
+<body>
+<nav class="float-nav">
+  <a href="index.html" title="home">⌂*✿:·</a>
+  <a href="work.html" title="my work">°*✶.</a>
+  <a href="about.html" title="about">₊˚౨ৎ˚</a>
+</nav>
+<div class="mob" id="mob">
+  <div class="mob-head"><svg width="100" height="65" viewBox="0 0 135 88" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38.9214 21.4081C41.0735 20.4273 43.6554 20.5237 45.9765 21.419C48.2977 22.3144 50.3158 23.9927 51.3514 26.1155L51.5874 26.5992L51.9483 26.2003C55.2762 22.5161 61.3961 20.2101 66.3288 20.2641C67.3885 20.2757 68.3816 20.4777 69.4986 20.587L69.688 20.6056L69.8109 20.4609C71.3182 18.8247 73.5014 17.7579 75.3412 17.4506C87.4135 15.6018 97.045 17.4778 104.287 24.2507L104.549 24.4956L104.797 24.2367C110.105 16.6302 120.86 17.3964 125.289 24.4831C126.915 27.116 127.431 30.2852 126.725 33.2986C126.036 36.1874 124.22 38.682 121.681 40.2258C119.579 41.5301 116.737 42.1478 114.278 41.9045C111.068 42.9431 110.661 44.7283 110.265 45.9135C108.552 50.939 104.916 55.0825 100.152 57.4364C95.9754 59.495 91.1534 59.8185 86.7402 58.3365C85.5491 61.5495 84.9828 62.8686 84.2475 64.0933C81.155 68.7896 76.6546 71.4838 71.8079 72.5841C65.7438 73.8308 60.1955 72.3036 55.5215 69.101C52.5569 68.7803 51.3815 69.0835 50.2024 69.1458C49.0218 69.2082 47.8165 69.0301 46.4 68.6384C45.582 70.3321 44.4738 72.4111 42.9847 74.6128C40.6761 76.0604 38.0681 76.5654C35.4392 77.0489 32.7244 76.4767 30.5148 74.9735C27.9429 73.2191 26.1992 70.4655 25.5706 67.4273C24.8088 62.8311 24.3248 63.2961C19.6005 67.8391 12.1028 66.8792 8.59802 61.265C6.71806 55.6899 6.38807 53.5411 6.99166 51.393C8.14278 47.1175 12.066 44.0732 16.4784 43.9111C18.5098 20.2158 18.4528 19.849 18.3525 19.1133C17.8098 14.8726 17.9876 11.0653 20.6201 7.50293C24.3662 2.43368 32.1432 1.62887 37.0967 5.4834C38.9446 2.34536 42.1665 0.549651 45.7285 0.135742Z" fill="black"/></svg><button class="mob-x" id="mobX">✕</button></div>
+  <div class="mob-nav">
+    <a href="index.html"><span>home ⌂*✿:·</span></a>
+    <a href="work.html"><span>my work °*✶.</span></a>
+    <a href="about.html"><span>about ₊˚౨ৎ˚</span></a>
+  </div>
+</div>
+<header>
+  <div class="nav">
+    <a href="index.html" class="nav-logo"><img src="assets/logo%20liso%20noir.png" alt="Liso Studio" style="height:32px;width:auto;display:block"></a>
+    <div class="nav-links">
+      <a href="index.html">home ⌂*✿:·</a>
+      <a href="work.html">my work °*✶.</a>
+      <a href="about.html">about ₊˚౨ৎ˚</a>
+    </div>
+    <button class="burger" id="mobOpen"><span></span><span></span></button>
+  </div>
+</header>
+
+<img src="assets/projects/smiirl.png" alt="Smiirl" class="proj-img">
+
+<div class="smiirl-shoot">
+  <video src="assets/videos/compsmiirlIGloutsa.mp4" class="smiirl-shoot-gif" autoplay muted loop playsinline></video>
+  <div class="smiirl-shoot-text">
+    <p>I had the opportunity to direct two video shoots during my year at Smiirl: one in a café in Paris's 5th arrondissement, Loutsa, and the other directly at the brand's premises.</p>
+    <p>The aim of the first was to showcase the Instagram counter in a real-life context, to illustrate its usefulness in stores and its ability to attract customers' attention.</p>
+    <p>In addition to the storyboard provided, I gave instructions to the videographer on site. Since I was going to be the one using the rushes for editing and campaigns, it was essential that I keep an eye on each shot to ensure their relevance and visual consistency.</p>
+  </div>
+</div>
+
+<div class="loutsa-banner">
+  <div style="overflow:hidden"><span class="loutsa-marquee-run">*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;*LOUTSA CAFÉ* &nbsp;&nbsp;</span></div>
+</div>
+
+<div class="loutsa-vids">
+  <div class="loutsa-vid-wrap" id="lv0">
+    <video src="assets/videos/videos%20page%20smiirl/loutsa%20-%20video%201%20.mp4" preload="metadata"></video>
+    <div class="loutsa-play"><span>▶</span></div>
+  </div>
+  <div class="loutsa-vid-wrap" id="lv1">
+    <video src="assets/videos/videos%20page%20smiirl/loutsa%20-%20video%202.mp4" preload="metadata"></video>
+    <div class="loutsa-play"><span>▶</span></div>
+  </div>
+  <div class="loutsa-vid-wrap" id="lv2">
+    <video src="assets/videos/videos%20page%20smiirl/loutsa%20-%20video%203.mp4" preload="metadata"></video>
+    <div class="loutsa-play"><span>▶</span></div>
+  </div>
+</div>
+
+<img src="assets/projects/smiirl_postloutsavideosection.png" alt="Smiirl — TikTok counter shoot" class="proj-img">
+
+<video autoplay muted playsinline loop style="width:100%;display:block" src="assets/videos/videos%20page%20smiirl/Smiirl%20tiktok%20-%203screens.mp4"></video>
+
+<div class="socialbanner">
+  <div style="overflow:hidden"><span class="socialbanner-run">*SOCIAL AD READY TO GO* &nbsp;&nbsp;*SOCIAL AD READY TO GO* &nbsp;&nbsp;*SOCIAL AD READY TO GO* &nbsp;&nbsp;*SOCIAL AD READY TO GO* &nbsp;&nbsp;*SOCIAL AD READY TO GO* &nbsp;&nbsp;*SOCIAL AD READY TO GO* &nbsp;&nbsp;</span></div>
+</div>
+
+<div class="vlib-grid">
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/arke.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/arke.png" src="assets/videos/videos%20page%20smiirl/1-1%20AARKE.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Julian%20Darmetko.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Julian%20Darmetko.png" src="assets/videos/videos%20page%20smiirl/Julian%20Darmetko.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Gym.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Gym.png" src="assets/videos/videos%20page%20smiirl/Gym.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/saby.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/saby.png" src="assets/videos/videos%20page%20smiirl/1-1_Montage%20video%20fondateur%20SABY.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/motionad.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/motionad.png" src="assets/videotheque%20add-ons/smiirl%20Motion%20Ads%20_Logitech_%20v2.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Loutsa.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Loutsa.png" src="assets/videos/videos%20page%20smiirl/LOUTSAcafe_pasbulleEN.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/winnerad.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/winnerad.png" src="assets/videos/videos%20page%20smiirl/1-1_MONTAGE%20WINNER%20AD%20%282%29.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/gael.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/gael.png" src="assets/videos/videos%20page%20smiirl/Rework_GAEL_V2_1-1.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/10thbirthday.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/10thbirthday.png" src="assets/videos/videos%20page%20smiirl/10thbirthday.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Apex%20on%20the%20diamond.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Apex%20on%20the%20diamond.png" src="assets/videos/videos%20page%20smiirl/Apex%20on%20the%20diamond.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/sampence.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/sampence.png" src="assets/videos/videos%20page%20smiirl/Montage%20Sam%20Pence%201-1.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+  <div class="vlib-wrap" style="--poster:url('assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Trio%20Stories.png')">
+    <video preload="none" poster="assets/videos/videos%20page%20smiirl/videotheque%20smiirl/covers/Trio%20Stories.png" src="assets/videos/videos%20page%20smiirl/Trio%20Stories.mp4"></video>
+    <div class="vlib-play"><span>▶</span></div>
+  </div>
+</div>
+
+<div class="smiirl-merci">
+  <div class="smiirl-merci-imgs">
+
+    <div class="merci-card">
+      <img src="assets/Capture%20decran%202023-09-29%20a%2017.35.32%201.png" alt="">
+      <div class="merci-en">
+        <div class="merci-en-bubble">
+          <div class="merci-en-text">😭😭😭 We're going to miss you so much! It was a genuine pleasure working alongside you. You're such a sunny and bubbly person, a real ball of energy! ☄️ We all witnessed your skills growing at lightning speed. I'm so proud of you and the path you've taken with us. If we contributed to your professional development in any way, that makes me very happy<br><br>I wish you a wonderful career, rich in professional and personal projects 🫶 Congrats on getting your degree, and all the best! Enjoy Morocco before diving back into the working world! Big hugs! 😘</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="merci-card">
+      <img src="assets/Capture%20decran%202023-09-29%20a%2017.35.39%201.png" alt="">
+      <div class="merci-en">
+        <div class="merci-en-bubble">
+          <div class="merci-en-text">We're going to miss you! Thank you so much for your commitment this year, your good spirits, your energy, we were so lucky to have you with us 🤩</div>
+        </div>
+        <div class="merci-en-bubble">
+          <div class="merci-en-text">Ooooh no, already! Thank you for everything you brought to us. Wishing you lots of wonderful adventures, even more fulfilling ones :) Can't wait to see you again 🫡 🤭 😀</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="smiirl-merci-text">
+    <p>This year at Smiirl has been a rich and exciting experience. I have learned a lot, about myself, my profession, and the demands of working independently. Working remotely has taught me discipline and the importance of organizing my time well, and the diversity of assignments has allowed me to push my skills in motion design and video editing.</p>
+    <p>I also had the opportunity to direct several shoots: <strong>a real immersion in the role of artistic director</strong>, which was both challenging and educational. The Smiirl experience is still helping me on the daily to manage jobs and now people!</p>
+    <p>Thank you to the whole team, and in particular to <strong>Alissa</strong> and <strong>Gaël</strong> for their trust, kindness, and support throughout this adventure. <strong>Thank you, Smiirl! &lt;3</strong></p>
+  </div>
+</div>
+
+<div class="proj-nav">
+  <a href="benji.html" class="pnav"><img class="pnav-icon" src="assets/benji%20gif.gif" alt=""><span class="pnav-lbl"><</span><span class="pnav-name">Benji</span></a>
+  <a href="framacademy.html" class="pnav pnav--right"><img class="pnav-icon" src="assets/framgif.gif" alt=""><span class="pnav-lbl">></span><span class="pnav-name">Framacademy</span></a>
+</div>
+
+<footer>
+  <div class="ft-disc">
+    <div class="ft-line"><span class="ft-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
+    <div class="ft-line"><span class="ft-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  </div>
+  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:44px;width:auto"></div>
+  <div class="ft-soc" id="ftSoc">
+    <a href="https://www.behance.net/lfnds" target="_blank" class="soc"><img src="assets/icons/Behance/lime.png" alt="Behance" draggable="false"></a>
+    <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc"><img src="assets/icons/Pinterest/lime.png" alt="Pinterest" draggable="false"></a>
+    <a href="https://www.linkedin.com" target="_blank" class="soc"><img src="assets/icons/LinkedIN/lime.png" alt="LinkedIn" draggable="false"></a>
+  </div>
+  <p class="ft-copy">lisostudio® 2026</p>
+</footer>
+<script>
+// Dominant color from poster → solid background
+document.querySelectorAll('.vlib-wrap').forEach(function(wrap){
+  var vid=wrap.querySelector('video');
+  var poster=vid.getAttribute('poster');
+  if(!poster)return;
+  var img=new Image();
+  img.onload=function(){
+    try{
+      var c=document.createElement('canvas');c.width=4;c.height=1;
+      var ctx=c.getContext('2d');
+      var w=img.width,h=img.height;
+      ctx.drawImage(img,Math.floor(w*.5),Math.floor(h*.02),1,1,0,0,1,1);
+      ctx.drawImage(img,Math.floor(w*.5),Math.floor(h*.98),1,1,1,0,1,1);
+      ctx.drawImage(img,Math.floor(w*.02),Math.floor(h*.5),1,1,2,0,1,1);
+      ctx.drawImage(img,Math.floor(w*.98),Math.floor(h*.5),1,1,3,0,1,1);
+      var d=ctx.getImageData(0,0,4,1).data;
+      var r=Math.round((d[0]+d[4]+d[8]+d[12])/4);
+      var g=Math.round((d[1]+d[5]+d[9]+d[13])/4);
+      var b=Math.round((d[2]+d[6]+d[10]+d[14])/4);
+      wrap.style.backgroundColor='rgb('+r+','+g+','+b+')';
+    }catch(e){}
+  };
+  img.src=poster;
+});
+
+// Vidéothèque — pause + cover on scroll out
+var vlibScrollObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(!e.isIntersecting){
+      var v=e.target.querySelector('video');
+      if(v){if(!v.paused)v.pause();e.target.classList.remove('playing');e.target.classList.add('ended');if(vlibActive===v)vlibActive=null;}
+    }
+  });
+},{threshold:0.2});
+var vlibActive=null;
+document.querySelectorAll('.vlib-wrap').forEach(function(wrap){
+  var vid=wrap.querySelector('video');
+
+  // vol bar
+  var volBar=document.createElement('div');volBar.className='vol-bar';
+  var volIcon=document.createElement('span');volIcon.className='vol-icon';volIcon.textContent='🔇';
+  var volRange=document.createElement('input');volRange.className='vol-range';volRange.type='range';volRange.min=0;volRange.max=1;volRange.step=0.01;volRange.value=0;
+  volBar.appendChild(volIcon);volBar.appendChild(volRange);wrap.appendChild(volBar);
+
+  // audio detection — show vol bar only if audio track exists
+  volBar.style.display='none';
+  vid.addEventListener('loadedmetadata',function(){
+    if((vid.audioTracks&&vid.audioTracks.length>0)||vid.mozHasAudio)volBar.style.display='flex';
+  });
+  vid.addEventListener('playing',function(){
+    if(volBar.style.display==='flex')return;
+    if(vid.webkitAudioDecodedByteCount>0)volBar.style.display='flex';
+  },{once:true});
+
+  volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.volume===0?'🔇':'🔊';});
+  volRange.addEventListener('click',function(e){e.stopPropagation();});
+  volIcon.addEventListener('click',function(e){
+    e.stopPropagation();
+    vid.muted=!vid.muted;
+    if(!vid.muted&&vid.volume===0){vid.volume=0.2;volRange.value=0.2;}
+    volIcon.textContent=vid.muted?'🔇':'🔊';
+    volRange.value=vid.muted?0:vid.volume;
+  });
+
+
+  var isLogitech=vid.src&&vid.src.toLowerCase().includes('logitech');
+  var prog=document.createElement('div');prog.className='vlib-progress';wrap.appendChild(prog);
+  vid.addEventListener('timeupdate',function(){if(vid.duration)prog.style.width=(vid.currentTime/vid.duration*100)+'%';});
+  vlibScrollObserver.observe(wrap);
+  wrap.addEventListener('click',function(){
+    if(vid.paused){
+      if(vlibActive&&vlibActive!==vid){
+        var pv=vlibActive;
+        if(pv.src&&pv.src.toLowerCase().includes('logitech')){pv.style.transform='';pv.style.objectFit='';}
+        pv.pause();var pw=pv.closest('.vlib-wrap');pw.classList.remove('playing');pw.classList.add('ended');
+      }
+      wrap.classList.remove('ended');
+      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;
+      if(isLogitech){vid.style.transform='rotate(-90deg)';vid.style.objectFit='contain';}
+      vid.play();wrap.classList.add('playing');vlibActive=vid;
+    } else {
+      if(isLogitech){vid.style.transform='';vid.style.objectFit='';}
+      vid.pause();wrap.classList.remove('playing');vlibActive=null;
+    }
+  });
+  vid.addEventListener('ended',function(){
+    if(isLogitech){vid.style.transform='';vid.style.objectFit='';}
+    wrap.classList.remove('playing');wrap.classList.add('ended');if(vlibActive===vid)vlibActive=null;
+  });
+});
+
+// Loutsa videos — pause on scroll out
+var loutsaObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(!e.isIntersecting){
+      var v=e.target.querySelector('video');
+      if(v&&!v.paused){v.pause();e.target.classList.remove('playing');if(loutsaActive===v)loutsaActive=null;}
+    }
+  });
+},{threshold:0.2});
+var loutsaActive=null;
+document.querySelectorAll('.loutsa-vid-wrap').forEach(function(wrap){
+  var vid=wrap.querySelector('video');
+  vid.loop=true;
+
+  var volBar=document.createElement('div');volBar.className='vol-bar';volBar.style.display='none';
+  var volIcon=document.createElement('span');volIcon.className='vol-icon';volIcon.textContent='🔇';
+  var volRange=document.createElement('input');volRange.className='vol-range';volRange.type='range';volRange.min=0;volRange.max=1;volRange.step=0.01;volRange.value=0;
+  volBar.appendChild(volIcon);volBar.appendChild(volRange);wrap.appendChild(volBar);
+  volBar.addEventListener('click',function(e){e.stopPropagation();});
+  volBar.addEventListener('mousedown',function(e){e.stopPropagation();});
+
+  var loutsaProg=document.createElement('div');loutsaProg.className='loutsa-progress';wrap.appendChild(loutsaProg);
+  vid.addEventListener('timeupdate',function(){if(vid.duration)loutsaProg.style.width=(vid.currentTime/vid.duration*100)+'%';});
+  vid.addEventListener('loadedmetadata',function(){
+    vid.currentTime=0.001;
+    if((vid.audioTracks&&vid.audioTracks.length>0)||vid.mozHasAudio)volBar.style.display='flex';
+  });
+  vid.addEventListener('playing',function(){
+    if(volBar.style.display==='flex')return;
+    if(vid.webkitAudioDecodedByteCount>0)volBar.style.display='flex';
+  },{once:true});
+
+  volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.volume===0?'🔇':'🔊';});
+  volRange.addEventListener('click',function(e){e.stopPropagation();});
+  volIcon.addEventListener('click',function(e){
+    e.stopPropagation();
+    vid.muted=!vid.muted;
+    if(!vid.muted&&vid.volume===0){vid.volume=0.2;volRange.value=0.2;}
+    volIcon.textContent=vid.muted?'🔇':'🔊';
+    volRange.value=vid.muted?0:vid.volume;
+  });
+
+  wrap.addEventListener('click',function(){
+    if(vid.paused){
+      if(loutsaActive&&loutsaActive!==vid){loutsaActive.pause();loutsaActive.closest('.loutsa-vid-wrap').classList.remove('playing');}
+      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;
+      vid.play();wrap.classList.add('playing');loutsaActive=vid;
+    } else {
+      vid.pause();wrap.classList.remove('playing');loutsaActive=null;
+    }
+  });
+  vid.addEventListener('ended',function(){wrap.classList.remove('playing');if(loutsaActive===vid)loutsaActive=null;});
+
+  loutsaObserver.observe(wrap);
+});
+
+const mob=document.getElementById('mob');
+if(mob){document.getElementById('mobOpen').onclick=()=>{mob.classList.add('open');document.body.style.overflow='hidden'};document.getElementById('mobX').onclick=()=>{mob.classList.remove('open');document.body.style.overflow=''}}
+// Footer icons — smooth lerp follow, stay on leave, reset on footer exit
+(function(){
+  var items=[];
+  document.querySelectorAll('.ft-soc .soc').forEach(function(icon){
+    var s={following:false,origCx:0,origCy:0,tx:0,ty:0,cx:0,cy:0,raf:null};
+    items.push({icon:icon,s:s});
+    icon.style.cursor='grab';
+    function tick(){s.cx+=(s.tx-s.cx)*0.12;s.cy+=(s.ty-s.cy)*0.12;icon.style.transform='translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';if(s.following||Math.abs(s.tx-s.cx)>0.1||Math.abs(s.ty-s.cy)>0.1)s.raf=requestAnimationFrame(tick);else s.raf=null;}
+    icon.addEventListener('mouseenter',function(){var r=icon.getBoundingClientRect();var t=getComputedStyle(icon).transform;var m=(t&&t!=='none')?new DOMMatrix(t):new DOMMatrix();s.origCx=r.left+r.width/2-m.m41;s.origCy=r.top+r.height/2-m.m42;s.following=true;icon.style.transition='none';icon.style.cursor='grabbing';if(!s.raf)s.raf=requestAnimationFrame(tick);});
+    icon.addEventListener('mouseleave',function(){s.following=false;icon.style.cursor='grab';});
+    document.addEventListener('mousemove',function(e){if(!s.following)return;s.tx=e.clientX-s.origCx;s.ty=e.clientY-s.origCy;});
+  });
+  var ft=document.querySelector('footer');
+  if(ft)ft.addEventListener('mouseleave',function(){items.forEach(function(it){it.s.following=false;it.s.tx=0;it.s.ty=0;it.s.cx=0;it.s.cy=0;it.icon.style.cursor='grab';it.icon.style.transition='transform .7s cubic-bezier(.34,1.56,.64,1)';it.icon.style.transform='translate(0,0)';if(it.s.raf){cancelAnimationFrame(it.s.raf);it.s.raf=null;}});});
+})();
+</script>
+</body>
+</html>

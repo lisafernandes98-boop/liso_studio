@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Vidéothèque — Liso Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{--lime:#C8F55A;--black:#111}
+body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
+
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:flex-start;gap:40px;padding:0 40px;height:120px}
+.nav-logo{height:32px;display:block;text-decoration:none;flex-shrink:0}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:#fff;text-decoration:none;padding:8px 24px;border-radius:100px}
+.nav-links a:hover{opacity:.6}
+.burger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.burger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px}
+.mob{display:none;position:fixed;inset:0;z-index:400;background:#000;flex-direction:column}
+.mob.open{display:flex}
+.mob-head{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:#fff;flex-shrink:0}
+.mob-x{background:none;border:none;font-size:22px;font-weight:700;cursor:pointer;color:#000}
+.mob-nav{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 40px}
+.mob-nav a{font-family:'Syne Mono',monospace;font-size:28px;color:#fff;text-decoration:none;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.1);display:block}
+.mob-nav a span{border-bottom:2px solid #fff;padding-bottom:2px}
+@media(max-width:768px){.nav-links{display:none}.burger{display:flex}}
+
+
+
+/* Volume slider — shared */
+.vol-bar{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:8px;background:rgba(249,191,220,.85);backdrop-filter:blur(6px);border-radius:100px;padding:6px 14px;opacity:0;transition:opacity .2s}
+.vlib-wrap.playing:hover .vol-bar{opacity:1}
+.vol-icon{font-size:13px;color:#111;cursor:pointer;user-select:none;flex-shrink:0;line-height:1}
+.vol-range{-webkit-appearance:none;appearance:none;width:90px;height:3px;border-radius:99px;background:rgba(0,0,0,.2);outline:none;cursor:pointer}
+.vol-range::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#111;cursor:pointer}
+.vol-range::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#111;border:none;cursor:pointer}
+/* cinema vol bar */
+.cinema-vol{bottom:20px;padding:7px 16px}
+.cinema-vol .vol-range{width:120px}
+
+/* scroll hint */
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-family:'Syne Mono',monospace;font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.12em;text-transform:uppercase;z-index:10;animation:hintBob 2s ease-in-out infinite}
+@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+
+/* FILTRES */
+#vlib-filters{display:flex;flex-wrap:wrap;gap:4px 24px;padding:28px 32px;background:#000;align-items:baseline}
+.vf{font-family:'Syne Mono',monospace;font-size:13px;color:rgba(249,191,220,.3);background:transparent;border:none;padding:0;cursor:pointer;transition:color .2s;letter-spacing:.06em;white-space:nowrap}
+.vf::before{content:'';margin-right:0;transition:margin-right .15s}
+.vf:hover{color:rgba(249,191,220,.7)}
+.vf.active{color:#F9BFDC}
+.vf.active::before{content:'✓ '}
+.vlib-item.hidden{display:none}
+
+/* SECTION 2 — VIDÉOTHÈQUE GRID */
+/* HERO */
+#vlib-hero{background:#000;padding:32px 32px;padding-top:136px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:280px}
+.vh-title-row{display:flex;align-items:center;gap:40px;position:relative;z-index:2}
+.vh-title{font-family:'Syne Mono',monospace;font-size:clamp(28px,4.5vw,64px);color:#F9BFDC;letter-spacing:.04em;text-align:center;white-space:nowrap}
+.vh-inline-gif{width:88px;height:88px;object-fit:contain;flex-shrink:0;opacity:0;transition:opacity .3s,transform .3s cubic-bezier(.34,1.56,.64,1);transform:scale(.85)}
+#vlib-hero:hover .vh-inline-gif{opacity:1;transform:scale(1)}
+.vh-gif{position:absolute;width:88px;height:88px;object-fit:contain;pointer-events:none;z-index:1;opacity:0;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s}
+.vh-g1{top:38%;left:3%;transform:rotate(-10deg) scale(.85)}
+.vh-g2{bottom:10%;left:12%;transform:rotate(6deg) scale(.85)}
+.vh-g3{top:40%;left:22%;transform:rotate(-4deg) scale(.85)}
+.vh-g5{top:36%;right:3%;transform:rotate(8deg) scale(.85)}
+.vh-g6{bottom:8%;right:11%;transform:rotate(-7deg) scale(.85)}
+.vh-g7{top:38%;right:20%;transform:rotate(3deg) scale(.85)}
+#vlib-hero:hover .vh-gif{opacity:1;transform:rotate(var(--r,0deg)) scale(1)}
+.vh-g1{--r:-10deg}.vh-g2{--r:6deg}.vh-g3{--r:-4deg}.vh-g4{--r:9deg}.vh-g5{--r:8deg}.vh-g6{--r:-7deg}.vh-g7{--r:3deg}
+#vlib{background:#000;padding:16px 32px 0}
+.vlib-title{font-family:'Syne Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:40px;text-align:center}
+.vlib-grid{columns:4;column-gap:16px;padding-bottom:80px}
+.vlib-grid.filtered{columns:3;column-gap:16px}
+.vlib-grid.filtered-topo{columns:unset;display:flex;justify-content:flex-start;gap:16px}
+.vlib-grid.filtered-topo .vlib-item{width:28%;margin-bottom:0}
+.vlib-grid.filtered-misc{columns:unset;display:flex;gap:16px}
+.vlib-grid.filtered-misc .vlib-item{flex:1;margin-bottom:0}
+.vlib-grid.filtered-claws{columns:unset;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:68vh;gap:16px}
+.vlib-grid.filtered-claws [data-featured]{grid-column:1;grid-row:1/span 2}
+.vlib-grid.filtered-claws .vlib-item{margin-bottom:0;display:block}
+.vlib-grid.filtered-claws .vlib-wrap{height:100%;aspect-ratio:unset}
+.vlib-wrap{position:relative;border-radius:24px;overflow:hidden;cursor:pointer;background:#000;aspect-ratio:3/2}
+.vlib-wrap.sq{aspect-ratio:1/1}
+.vlib-wrap.port{aspect-ratio:9/16}
+.vlib-progress{position:absolute;bottom:0;left:0;width:0%;height:3px;background:#F9BFDC;z-index:4;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:0 2px 2px 0}
+.vlib-wrap.playing .vlib-progress{opacity:1}
+
+/* Project GIF icon — outside the wrap */
+.vlib-item{position:relative;break-inside:avoid;margin-bottom:16px;display:inline-block;width:100%}
+.vlib-ico{position:absolute;bottom:-20px;right:-14px;width:100px;height:100px;object-fit:contain;pointer-events:none;z-index:4;transform:rotate(8deg) scale(.8);opacity:0;transition:opacity .3s,transform .3s cubic-bezier(.22,1,.36,1)}
+.vlib-wrap:hover~.vlib-ico{opacity:1;transform:rotate(5deg) scale(1)}
+.vlib-wrap video{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:block;object-fit:cover}
+.vlib-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:48px;z-index:2;pointer-events:none}
+.vlib-play span{font-family:'Syne Mono',monospace;font-size:clamp(36px,4vw,64px);color:#F9BFDC;line-height:1;user-select:none;opacity:0;transition:opacity .2s}
+.vlib-wrap:not(.playing):hover .vlib-play span{opacity:1}
+@media(max-width:768px){
+  #cinema{justify-content:center;padding-top:100px}
+  .cinema-wrap{width:90vw}
+  #vlib{padding:48px 20px 0}
+  .vlib-grid{columns:1;column-gap:0}
+  .vlib-wrap{border-radius:28px}
+}
+
+/* FOOTER */
+footer{background:#000;padding:28px 48px 40px;border-top:1px solid rgba(255,255,255,.08)}
+.ft-disc{margin-bottom:0;overflow:hidden}
+.ft-run{display:inline-block;animation:ftScroll 42s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(16px,2.4vw,38px);letter-spacing:.04em;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+.ft-line{overflow:hidden;white-space:nowrap}
+@keyframes ftScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ft-copy{font-family:'Syne Mono',monospace;font-size:10px;color:var(--lime);text-align:center;margin-top:20px;letter-spacing:.05em;opacity:.7}
+.ft-logo{display:flex;justify-content:center;margin:20px 0 16px}
+.ft-logo img{height:44px;width:auto}
+.ft-soc{display:flex;justify-content:center;gap:12px}
+.soc{width:40px;height:40px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.soc img{width:40px;height:40px;object-fit:contain;display:block}
+@media(max-width:768px){footer{padding:24px 20px 32px}}
+</style>
+</head>
+<body>
+
+<div class="mob" id="mob">
+  <div class="mob-head"><svg width="100" height="65" viewBox="0 0 135 88" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38.9214 21.4081C41.0735 20.4273 43.6554 20.5237 45.9765 21.419C48.2977 22.3144 50.3158 23.9927 51.3514 26.1155L51.5874 26.5992L51.9483 26.2003C55.2762 22.5161 61.3961 20.2101 66.3288 20.2641C67.3885 20.2757 68.3816 20.4777 69.4986 20.587L69.688 20.6056L69.8109 20.4609C69.889 20.3693 69.9702 20.2789 70.0525 20.1897L70.0514 20.189C71.3182 18.8247 73.5014 17.7579 75.3412 17.4506C75.7466 17.3831 76.1593 17.3411 76.5849 17.2987C77.0067 17.2567 77.4423 17.214 77.8744 17.1441C87.4135 15.6018 97.045 17.4778 104.287 24.2507L104.549 24.4956L104.797 24.2367C110.105 16.6302 120.86 17.3964 125.289 24.4831C126.915 27.116 127.431 30.2852 126.725 33.2986C126.036 36.1874 124.22 38.682 121.681 40.2258L121.678 40.2277C119.579 41.5301 116.737 42.1478 114.278 41.9045L111.149 41.2845L111.128 41.7207C111.068 42.9431 110.661 44.7283 110.265 45.9135C108.552 50.939 104.916 55.0825 100.152 57.4364C95.9754 59.495 91.1534 59.8185 86.7402 58.3365L86.3458 58.2034L86.268 58.6128C85.5491 61.5495 84.9828 62.8686 84.2475 64.0933L83.9216 64.6122C81.155 68.7896 76.6546 71.4838 71.8079 72.5841L71.3379 72.6854C65.7438 73.8308 60.1955 72.3036 55.5215 69.101L54.0922 68.1015L53.9105 68.1828C52.5569 68.7803 51.3815 69.0835 50.2024 69.1458C49.0218 69.2082 47.8165 69.0301 46.4 68.6384L46.0434 68.5389L45.9506 68.8978C45.582 70.3321 44.4738 72.4111 42.9847 74.6128C40.6761 76.0604 38.0681 76.5654C35.4392 77.0489 32.7244 76.4767 30.5148 74.9735C27.9429 73.2191 26.1992 70.4655 25.5706 67.4273L24.3248 63.2961C19.6005 67.8391 12.1028 66.8792 8.59802 61.265C6.71806 55.6899 6.38807 53.5411 6.99166 51.393C8.14278 47.1175 12.066 44.0732 16.4784 43.9111C17.8026 43.8625 18.6885 44.0453 20.0133 44.3978L20.737 44.5911L20.4402 43.9032L20.0685 43.0108C18.6946 39.5716 18.0498 36.4161 19.4483 32.9506C21.4307 28.0387 27.6175 25.7251 32.4835 27.831L32.8637 27.995L32.9779 27.5974C33.8202 24.6613 36.0622 22.5126 38.9013 21.4163L38.9115 21.4126L38.9214 21.4081Z" fill="white" stroke="white" stroke-width="0.727019"/></svg><button class="mob-x" id="mobX">✕</button></div>
+  <div class="mob-nav">
+    <a href="index.html"><span>home ⌂*✿:·</span></a>
+    <a href="work.html"><span>my work °*✶.</span></a>
+    <a href="about.html"><span>about ₊˚౨ৎ˚</span></a>
+  </div>
+</div>
+
+<header style="position:absolute;top:0;left:0;right:0;z-index:300;background:transparent">
+  <div class="nav">
+    <a href="index.html" class="nav-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:36px;width:auto;display:block"></a>
+    <div class="nav-links">
+      <a href="index.html">home ⌂*✿:·</a>
+      <a href="work.html">my work °*✶.</a>
+      <a href="about.html">about ₊˚౨ৎ˚</a>
+    </div>
+    <button class="burger" id="mobOpen"><span></span><span></span></button>
+  </div>
+</header>
+
+
+<!-- ── HERO ── -->
+<section id="vlib-hero">
+  <div class="vh-title-row">
+    <h1 class="vh-title">la vidéothèque</h1>
+    <img class="vh-inline-gif" src="assets/jobxgif.gif" alt="">
+  </div>
+  <img class="vh-gif vh-g1" src="assets/smiirlgif.gif" alt="">
+  <img class="vh-gif vh-g2" src="assets/topogif.gif" alt="">
+  <img class="vh-gif vh-g3" src="assets/gif%20claws%20logo.gif" alt="">
+  <img class="vh-gif vh-g5" src="assets/breakleaguegif.gif" alt="">
+  <img class="vh-gif vh-g6" src="assets/w-lisogif.gif" alt="">
+  <img class="vh-gif vh-g7" src="assets/lisogif.gif" alt="">
+</section>
+
+<div id="vlib-filters">
+  <button class="vf active" data-cat="all">all</button>
+  <button class="vf" data-cat="smiirl">smiirl</button>
+  <button class="vf" data-cat="claws">claws</button>
+  <button class="vf" data-cat="topo">topo</button>
+  <button class="vf" data-cat="breakleague">break league</button>
+  <button class="vf" data-cat="misc">misc</button>
+</div>
+
+<!-- ── SECTION 2 : VIDÉOTHÈQUE GRID ── -->
+<section id="vlib">
+  <div class="vlib-grid" id="vlibGrid"></div>
+</section>
+
+<footer>
+  <div class="ft-disc">
+    <div class="ft-line"><span class="ft-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
+    <div class="ft-line"><span class="ft-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  </div>
+  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:44px;width:auto"></div>
+  <div class="ft-soc">
+    <a href="https://www.behance.net/lfnds" target="_blank" class="soc"><img src="assets/icons/Behance/lime.png" alt="Behance" draggable="false"></a>
+    <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc"><img src="assets/icons/Pinterest/lime.png" alt="Pinterest" draggable="false"></a>
+    <a href="https://www.linkedin.com" target="_blank" class="soc"><img src="assets/icons/LinkedIN/lime.png" alt="LinkedIn" draggable="false"></a>
+  </div>
+  <p class="ft-copy">lisostudio® 2026</p>
+</footer>
+
+<script>
+// ── Mobile menu
+const mob=document.getElementById('mob');
+if(mob){document.getElementById('mobOpen').onclick=()=>{mob.classList.add('open');document.body.style.overflow='hidden'};document.getElementById('mobX').onclick=()=>{mob.classList.remove('open');document.body.style.overflow=''}}
+
+
+
+
+// ── Project icon mapping
+function getIcon(src){
+  const s=src.toLowerCase();
+  if(s.includes('claws'))return'assets/gif%20claws%20logo.gif';
+  if(s.includes('smiirl')||s.includes('loutsa'))return'assets/smiirlgif.gif';
+  if(s.includes('topo')||s.includes('malakoff'))return'assets/topogif.gif';
+  if(s.includes('break')||s.includes('league'))return'assets/breakleaguegif.gif';
+  if(s.includes('job')||s.includes('expresso'))return'assets/jobxgif.gif';
+  return'assets/lisogif.gif';
+}
+
+
+// ── Single active video tracker + scroll-pause observer
+let activeVid=null;
+const vidObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    const v=e.target;
+    if(!e.isIntersecting){
+      if(!v.paused){v.pause();v.closest('.vlib-wrap').classList.remove('playing');}
+      if(activeVid===v)activeVid=null;
+    } else {
+      // force frame when entering viewport
+      if(v.readyState>=1&&v.currentTime===0)v.currentTime=0.001;
+    }
+  });
+},{threshold:0.1});
+
+// ── BUILD GRID dynamically
+const gridVideos=[
+  {src:'assets/videotheque%20add-ons/claws%20clic%20clac%20video%20Lisa.mp4',cat:'claws'},
+  {src:'assets/videotheque%20add-ons/video%20claws.mp4',cat:'claws',featured:true},
+  {src:'assets/videotheque%20add-ons/allo_claws.mp4',cat:'claws'},
+  {src:'assets/videotheque%20add-ons/topo%20002Lutece_it02.mp4',cat:'topo'},
+  {src:'assets/videotheque%20add-ons/Topo_Coulommiers_it01.mp4',cat:'topo'},
+  {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%201%20.mp4',cat:'smiirl'},
+  {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%202.mp4',cat:'smiirl'},
+  {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%203.mp4',cat:'smiirl'},
+  {src:'assets/videotheque%20add-ons/smiirl%20footage.mp4',cat:'smiirl'},
+  {src:'assets/videotheque%20add-ons/smiirlmims.mp4',cat:'smiirl'},
+  {src:'assets/videotheque%20add-ons/Break%20League%20%231.mp4',cat:'breakleague'},
+  {src:'assets/videotheque%20add-ons/Breakleague%20Video%2002.mp4',cat:'breakleague'},
+  {src:'assets/videos/video%20job%20expresso.mp4',cat:'misc'},
+  {src:'assets/page%20liso/videos/lesrecettes.mp4',cat:'misc'},
+  {src:'assets/videotheque%20add-ons/Le%20Brunch%20Collaboratif%20Lisa.mp4',cat:'misc'},
+  {src:'assets/videotheque%20add-ons/Lisa%20Leiros%20Fernandes.mp4',cat:'misc'},
+];
+
+const grid=document.getElementById('vlibGrid');
+const rowContainers={};
+gridVideos.forEach(function(v){
+  const item=document.createElement('div');
+  item.className='vlib-item';
+  if(v.cat)item.dataset.cat=v.cat;
+  if(v.featured)item.dataset.featured='true';
+  const wrap=document.createElement('div');
+  wrap.className='vlib-wrap';
+
+  const vid=document.createElement('video');
+  vid.className='vlib-vid';
+  vid.preload='auto';
+  vid.src=v.src;
+  vid.playsInline=true;
+  if(v.src.toLowerCase().includes('smiirl%20footage'))vid.style.objectPosition='right center';
+  if(v.src.toLowerCase().includes('clic%20clac'))vid.style.objectPosition='center 30%';
+  if(v.src.toLowerCase().includes('allo_claws'))vid.style.objectPosition='center top';
+  if(v.src.toLowerCase().includes('smiirlmims'))vid.style.objectFit='contain';
+  if(v.src.toLowerCase().includes('logitech')){vid.style.transform='rotate(-90deg)';vid.style.objectFit='contain';}
+  vid.loop=true;
+
+  const overlay=document.createElement('div');
+  overlay.className='vlib-play';
+  overlay.innerHTML='<span>▶</span>';
+
+  // Project GIF icon in corner
+  const ico=document.createElement('img');
+  ico.className='vlib-ico';
+  ico.src=getIcon(v.src);
+  ico.alt='';
+
+  wrap.appendChild(vid);
+  wrap.appendChild(overlay);
+  item.appendChild(wrap);
+  item.appendChild(ico);
+  if(v.row){
+    if(!rowContainers[v.row]){
+      rowContainers[v.row]=document.createElement('div');
+      rowContainers[v.row].className='vlib-row';
+      grid.appendChild(rowContainers[v.row]);
+    }
+    rowContainers[v.row].appendChild(item);
+  } else {
+    grid.appendChild(item);
+  }
+
+  // volume bar — hidden until audio track confirmed
+  const noAudio=v.src.toLowerCase().includes('job%20expresso')||v.src.toLowerCase().includes('job expresso');
+  const volBar=document.createElement('div');volBar.className='vol-bar';volBar.style.display='none';
+  const volIcon=document.createElement('span');volIcon.className='vol-icon';volIcon.textContent='🔊';
+  const volRange=document.createElement('input');volRange.className='vol-range';volRange.type='range';volRange.min=0;volRange.max=1;volRange.step=0.01;volRange.value=0.08;
+  volBar.appendChild(volIcon);volBar.appendChild(volRange);wrap.appendChild(volBar);
+  volBar.addEventListener('click',function(e){e.stopPropagation();});
+  volBar.addEventListener('mousedown',function(e){e.stopPropagation();});
+
+  vid.addEventListener('loadedmetadata',function(){
+    vid.currentTime=0.001; // trigger first frame
+    // 3 shapes: portrait 9:16 / square 1:1 / landscape 3:2 (default)
+    const r=vid.videoWidth/vid.videoHeight;
+    if(r<0.7){wrap.classList.add('port');}
+    else if(r<1.2){wrap.classList.add('sq');}
+    // Audio detection (skip for videos known to have no audio)
+    if(!noAudio&&((vid.audioTracks&&vid.audioTracks.length>0)||vid.mozHasAudio))volBar.style.display='flex';
+    // Scroll-pause observer
+    vidObserver.observe(vid);
+  });
+
+  volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.volume===0?'🔇':'🔊';});
+  volRange.addEventListener('click',function(e){e.stopPropagation();});
+  volIcon.addEventListener('click',function(e){e.stopPropagation();vid.muted=!vid.muted;volIcon.textContent=vid.muted?'🔇':'🔊';volRange.value=vid.muted?0:vid.volume;});
+  var prog=document.createElement('div');prog.className='vlib-progress';wrap.appendChild(prog);
+  vid.addEventListener('timeupdate',function(){if(vid.duration)prog.style.width=(vid.currentTime/vid.duration*100)+'%';});
+
+  wrap.addEventListener('click',function(){
+    if(vid.paused){
+      if(activeVid&&activeVid!==vid){
+        activeVid.pause();
+        const aw=activeVid.closest('.vlib-wrap');
+        if(aw)aw.classList.remove('playing');
+      }
+      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;vid.play();wrap.classList.add('playing');activeVid=vid;
+    }else{
+      vid.pause();wrap.classList.remove('playing');activeVid=null;
+    }
+  });
+  vid.addEventListener('ended',function(){wrap.classList.remove('playing');if(activeVid===vid)activeVid=null;});
+  // webkit fallback — check audio after playback starts
+  vid.addEventListener('playing',function(){
+    if(noAudio||volBar.style.display==='flex')return;
+    if(vid.webkitAudioDecodedByteCount>0)volBar.style.display='flex';
+  },{once:true});
+});
+
+// ── Filtres
+document.querySelectorAll('.vf').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.vf').forEach(function(b){b.classList.remove('active');});
+    btn.classList.add('active');
+    var cat=btn.dataset.cat;
+    grid.classList.remove('filtered','filtered-topo','filtered-claws','filtered-misc');
+    document.querySelectorAll('.vlib-item').forEach(function(item){
+      if(cat==='all'||item.dataset.cat===cat){item.classList.remove('hidden');}
+      else{
+        var v=item.querySelector('video');
+        if(v&&!v.paused){v.pause();item.querySelector('.vlib-wrap').classList.remove('playing');}
+        item.classList.add('hidden');
+      }
+    });
+    // reset explicit positions
+    document.querySelectorAll('.vlib-item').forEach(function(i){i.style.gridColumn='';i.style.gridRow='';});
+    if(cat==='misc'){grid.classList.add('filtered','filtered-misc');}
+    else if(cat==='topo'){grid.classList.add('filtered','filtered-topo');}
+    else if(cat==='claws'){
+      grid.classList.add('filtered','filtered-claws');
+      var clawsVisible=Array.from(document.querySelectorAll('.vlib-item[data-cat="claws"]'));
+      clawsVisible.forEach(function(it){
+        if(it.dataset.featured){it.style.gridColumn='1';it.style.gridRow='1 / span 2';}
+        else{it.style.gridColumn='2';}
+      });
+    }
+    else if(cat!=='all'){grid.classList.add('filtered');}
+  });
+});
+
+// ── Footer icons drag
+(function(){
+  var items=[];
+  document.querySelectorAll('.ft-soc .soc').forEach(function(icon){
+    var s={following:false,origCx:0,origCy:0,tx:0,ty:0,cx:0,cy:0,raf:null};
+    items.push({icon:icon,s:s});icon.style.cursor='grab';
+    function tick(){s.cx+=(s.tx-s.cx)*0.12;s.cy+=(s.ty-s.cy)*0.12;icon.style.transform='translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';if(s.following||Math.abs(s.tx-s.cx)>0.1||Math.abs(s.ty-s.cy)>0.1)s.raf=requestAnimationFrame(tick);else s.raf=null;}
+    icon.addEventListener('mouseenter',function(){var r=icon.getBoundingClientRect();var t=getComputedStyle(icon).transform;var m=(t&&t!=='none')?new DOMMatrix(t):new DOMMatrix();s.origCx=r.left+r.width/2-m.m41;s.origCy=r.top+r.height/2-m.m42;s.following=true;icon.style.transition='none';icon.style.cursor='grabbing';if(!s.raf)s.raf=requestAnimationFrame(tick);});
+    icon.addEventListener('mouseleave',function(){s.following=false;icon.style.cursor='grab';});
+    document.addEventListener('mousemove',function(e){if(!s.following)return;s.tx=e.clientX-s.origCx;s.ty=e.clientY-s.origCy;});
+  });
+  var ft=document.querySelector('footer');
+  if(ft)ft.addEventListener('mouseleave',function(){items.forEach(function(it){it.s.following=false;it.s.tx=0;it.s.ty=0;it.s.cx=0;it.s.cy=0;it.icon.style.cursor='grab';it.icon.style.transition='transform .7s cubic-bezier(.34,1.56,.64,1)';it.icon.style.transform='translate(0,0)';if(it.s.raf){cancelAnimationFrame(it.s.raf);it.s.raf=null;}});});
+})();
+</script>
+</body>
+</html>

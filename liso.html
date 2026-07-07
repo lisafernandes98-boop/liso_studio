@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liso — Liso Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+:root{--black:#111;--pink:#F9BFDC;--lime:#C8F55A;--pad:20px}
+body{color:var(--black);font-family:'Syne Mono',monospace;overflow-x:hidden;background:#fff;scrollbar-gutter:stable}
+
+/* ── NAV ── */
+.nav{display:flex;align-items:center;gap:40px;padding:0 var(--pad);height:120px}
+.nav a img{height:32px;width:auto;display:block}
+.nav-links{display:flex;gap:8px}
+.nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:var(--black);text-decoration:none;padding:8px 24px;border-radius:100px}
+.nav-links a:hover{opacity:.6}
+.burger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
+.burger span{display:block;width:22px;height:2px;background:var(--black);border-radius:2px}
+
+/* ── MOBILE MENU ── */
+.mob{display:none;position:fixed;inset:0;z-index:400;background:var(--black);flex-direction:column}
+.mob.open{display:flex}
+.mob-head{display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:58px;background:#fff;flex-shrink:0}
+.mob-head svg{height:36px;width:auto}
+.mob-x{background:none;border:none;font-size:22px;font-weight:700;cursor:pointer;color:var(--black)}
+.mob-nav{flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 40px}
+.mob-nav a{font-family:'Syne Mono',monospace;font-size:28px;color:#fff;text-decoration:none;padding:26px 0;border-bottom:1px solid rgba(255,255,255,.1);display:block}
+.mob-nav a span{border-bottom:2px solid #fff;padding-bottom:2px}
+
+/* ── FLOAT NAV ── */
+.float-nav{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;gap:20px}
+.float-nav a{font-family:'Syne Mono',monospace;font-size:14px;color:var(--black);text-decoration:none;transition:opacity .2s}
+.float-nav a:hover{opacity:.5}
+
+/* ── HERO PHRASE ── */
+.liso-hero{padding:48px var(--pad) 56px;padding-left:calc(var(--pad) + 70px);min-height:44vh;display:flex;align-items:flex-end}
+.liso-hero-title{font-family:'Syne Mono',monospace;font-size:clamp(22px,3.8vw,54px);font-weight:800;letter-spacing:-.02em;line-height:1.25;text-transform:uppercase}
+.circle-word{border:3.5px solid var(--black);border-radius:50%;padding:.14em .38em;display:inline-block;line-height:inherit}
+.strikethrough{text-decoration:line-through;text-decoration-thickness:5px}
+.pink-wavy{color:var(--pink);text-decoration:underline wavy var(--pink);text-underline-offset:6px;text-decoration-thickness:4px}
+.lime-underline{color:var(--lime);text-decoration:underline var(--lime);text-underline-offset:6px;text-decoration-thickness:4px}
+
+/* ══════════════════════════════════════
+   COLLAGE — flux vertical aéré
+   Compos pleine largeur (PNG transparents),
+   texte TOUJOURS dans un espace blanc,
+   grandes marges entre sections
+══════════════════════════════════════ */
+.collage{--ch:clamp(520px,80vh,960px);max-width:1560px;margin:0 auto;padding:0 var(--pad)}
+
+/* sections rapprochées */
+.sec{position:relative;margin-top:clamp(6px,0.7vw,10px)}
+.sec:first-child{margin-top:18px}
+
+/* IMAGE — taille homogène : hauteur plafonnée commune à toutes les compos */
+.sec-img{max-height:var(--ch);width:auto;height:auto;max-width:100%;display:block}
+
+/* HAUT — 3 colonnes : Singles / Expé / Demain */
+.top2{position:relative;display:flex;flex-direction:column;align-items:center;gap:clamp(70px,8vw,120px);margin-top:18px}
+.top2-row{width:100%;max-width:1000px;display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,5vw,64px);align-items:start}
+.top2-row-3{max-width:1440px;grid-template-columns:1fr 1fr 1fr}
+.top2-col{display:flex;flex-direction:column;gap:clamp(60px,7vw,100px)}
+.top2 .item{width:100%;max-width:680px;display:flex;flex-direction:column;gap:24px}
+.top2-row .item,.top2-row .top2-col .item{max-width:none}
+.top2 .sec-img{width:100%;height:auto;max-height:none;display:block}
+.top2 .txt{max-width:42ch}
+
+/* EXPÉ — grille 2x2 fixe, au clic chaque case fait défiler d'autres photos (pool élargi) */
+.expe-grid{position:relative;width:100%;aspect-ratio:3/4}
+.expe-cell{position:absolute;width:calc(50% - 7px);height:calc(50% - 7px);cursor:pointer}
+.expe-grid-img{width:100%;height:100%;object-fit:cover;display:block;border-radius:14px;transition:opacity .26s ease}
+
+/* SINGLES — pile de covers, swipe façon Tinder */
+.singles-comp{position:relative;width:100%;max-width:360px;aspect-ratio:1/1;margin:0 auto;user-select:none}
+.single-wrap{position:absolute;inset:0;width:100%;height:100%;cursor:grab;will-change:transform}
+.single-img{width:100%;height:100%;display:block;border-radius:16px;object-fit:cover;pointer-events:none}
+.singles-hint{position:absolute;left:50%;bottom:-34px;transform:translateX(-50%);font-family:'Syne Mono',monospace;font-size:12px;color:rgba(0,0,0,.4);pointer-events:none;white-space:nowrap}
+
+/* DEMAIN — collage 3 éléments */
+.dsm-comp{position:relative;width:100%;aspect-ratio:1000/1000;overflow:visible;padding-bottom:4%}
+.dsm-wrap{position:absolute;cursor:pointer}
+.dsm-img{width:100%;display:block;border-radius:16px;opacity:1}
+.dsm-logo-img{width:100%;display:block;border-radius:0;opacity:1}
+.dsm-bg{position:absolute;left:0;top:0;width:100%;display:block;z-index:0;pointer-events:none;opacity:0}
+
+/* lignes compo + texte (alternées gauche/droite) — PNG mis en avant */
+.sec-row{display:flex;gap:clamp(28px,4vw,64px);align-items:center;flex-wrap:wrap}
+.sec-row.r-li{flex-direction:row-reverse}
+.sec-row .sec-img{flex:0 1 auto;max-width:78%}
+.sec-row .txt{flex:1 1 200px;min-width:0;max-width:28ch}
+
+/* sous les deux colonnes : bloc image quasi pleine largeur + bloc texte dessous, ferré à gauche */
+.sec-stack .sec-img{width:100%;max-height:none;height:auto;margin:0;display:block}
+.sec-stack .txt{margin-top:clamp(22px,2.6vw,42px);margin-left:0;max-width:88ch}
+
+/* texte calé dans le creux blanc de la compo (position réglable par section) */
+.sec-pocket{position:relative}
+.sec-pocket .sec-img{width:100%;height:auto;max-height:none;display:block}
+.sec-pocket .txt{position:absolute;max-width:none;margin:0}
+.pocket-kult{margin-top:clamp(48px,5vw,80px)}
+.pocket-kult .txt{left:3%;top:72%;width:calc(38% + 150px)}
+/* KOLORS — compo pleine largeur tiltée, texte en dessous, bouteilles en absolu en bas-droite */
+.pocket-kolors{position:relative;display:block;overflow:visible;padding-bottom:clamp(100px,14vw,200px);margin-top:clamp(4px,0.5vw,8px)}
+.pocket-kolors .kolors-left{display:block}
+.pocket-kolors .kolors-collage{
+  display:block;
+  width:100%;
+  height:auto;
+}
+.pocket-kolors .txt{
+  position:absolute;left:35%;top:73%;width:36%;
+  text-align:left;font-size:clamp(13px,1.1vw,16px);line-height:1.6;
+}
+.kolors-brassophia{position:absolute;left:37%;top:2%;width:clamp(200px,30vw,420px);z-index:3;pointer-events:auto;transform:rotate(-2deg);transform-origin:50% 90%}
+.kolors-cans1{position:absolute;left:56.8%;top:13%;width:clamp(180px,32vw,460px);z-index:2;pointer-events:none;transform:rotate(0deg)}
+.kolors-framboises{position:absolute;left:79.6%;top:10%;width:clamp(140px,20vw,280px);z-index:4;pointer-events:none}
+.kolors-handmade{position:absolute;left:54%;top:34.5%;width:clamp(220px,32vw,420px);border-radius:14px;z-index:5;pointer-events:none}
+.kolors-cangreen{position:absolute;left:calc(82% - 70px);top:calc(30% - 40px);width:clamp(180px,26vw,340px);z-index:6;pointer-events:none}
+.kolors-rainbow{position:absolute;left:7%;top:16%;width:clamp(330px,51vw,660px);z-index:1;pointer-events:none;transform:rotate(-6deg)}
+.kolors-typo{position:absolute;left:38%;top:41.5%;width:clamp(200px,30vw,380px);z-index:7;pointer-events:none;transform:rotate(3deg)}
+.kolors-peche{position:absolute;left:18%;top:46%;width:clamp(200px,30vw,380px);z-index:5;pointer-events:none}
+.kolors-3cans{position:absolute;left:1%;top:50%;width:clamp(280px,40vw,500px);z-index:0;pointer-events:none;transform:rotate(-4deg)}
+.pocket-kolors .kolors-bottles-wrap{
+  position:absolute;right:-1%;top:58%;width:clamp(200px,26vw,360px);
+  display:flex;align-items:flex-end;justify-content:center;z-index:20;
+}
+.pocket-kolors .kolors-bottles{width:100%;height:auto;display:block;transform-origin:50% 88%;will-change:transform}
+/* Kult — vidéo logée derrière la compo, dans le trou "VIDEO HERE" (haut-droite) */
+.pocket-kult>.sec-img{position:relative;z-index:2;pointer-events:none}
+.kult-vid{position:absolute;z-index:1;left:48%;top:14%;width:40%;aspect-ratio:16/9;border-radius:clamp(18px,2.4vw,40px);overflow:hidden;background:#000}
+.kult-vid video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover}
+.kult-vid .vol-bar{opacity:0}
+.kult-vid:hover .vol-bar{opacity:1}
+/* Kult — légende Luidji, dans le blanc à droite de la compo */
+/* Kult — paragraphe d'intro dans le vide en haut (au-dessus de la vidéo) */
+.pocket-kult .kult-intro{
+  position:absolute;z-index:3;left:calc(55% - 30px);top:1%;width:44%;
+  font-family:'Syne Mono',monospace;
+  font-size:clamp(13px,1.1vw,16px);line-height:1.4;color:rgba(0,0,0,.78);
+}
+/* Kult — crédit illustration : carte "glass" au survol de l'affiche Jump Around */
+.pocket-kult .kult-hot,.pocket-kult .kult-hot2,.pocket-kult .kult-hot3{position:absolute;z-index:3;cursor:help}
+.pocket-kult .kult-hot{left:27.5%;top:34%;width:16.5%;height:29%}
+.pocket-kult .kult-hot2{left:54%;top:61%;width:17.3%;height:26%}
+.pocket-kult .kult-hot3{left:48%;top:58%;width:34%;height:10%}
+.kult-tip{
+  position:absolute;left:50%;bottom:calc(100% + 10px);
+  transform:translateX(-50%) translateY(6px) scale(.97);
+  width:max-content;max-width:230px;
+  padding:12px 15px;border-radius:16px;
+  font-family:'Syne Mono',monospace;font-size:12px;line-height:1.5;
+  color:#141414;text-align:left;
+  background:rgba(255,255,255,.42);
+  -webkit-backdrop-filter:blur(16px) saturate(165%);
+  backdrop-filter:blur(16px) saturate(165%);
+  border:1px solid rgba(255,255,255,.55);
+  box-shadow:0 12px 34px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.6);
+  opacity:0;pointer-events:none;
+  transition:opacity .26s ease,transform .26s ease;
+}
+.kult-tip--wide{max-width:280px}
+.dsm-hot{position:relative;cursor:help;display:block}
+.pocket-kult .kult-hot:hover .kult-tip,
+.pocket-kult .kult-hot2:hover .kult-tip,
+.dsm-hot:hover .kult-tip{
+  opacity:1;transform:translateX(-50%) translateY(0) scale(1);
+}
+/* Luidji tip — apparaît à droite du hotspot dans le blanc */
+.pocket-kult .kult-hot3 .kult-tip{
+  bottom:auto;top:0;left:calc(100% + 14px);
+  transform:translateX(0) translateY(6px) scale(.97);
+  max-width:220px;
+}
+.pocket-kult .kult-hot3:hover .kult-tip{
+  opacity:1;transform:translateX(0) translateY(0) scale(1);
+}
+.pocket-migration .txt{left:calc(2% - 25px);top:calc(63% + 130px);width:calc(40% + 170px);text-align:right}
+
+/* frise panoramique (museum) : pleine largeur + texte dessous */
+.sec-strip .sec-img{width:100%;max-height:none;margin:0 auto}
+.sec-strip .txt{margin-top:clamp(22px,2.8vw,40px);width:88%;margin-left:auto;margin-right:auto}
+
+/* Illustrations — aura au survol (test lime), sizing closest-side pour ne jamais être coupée par le bord de section */
+.illus-sec{padding:32px 0;border-radius:24px;transition:background .4s ease}
+.illus-sec:hover{background:radial-gradient(circle closest-side at center, #C8F55A 0%, #e4fa9e 40%, #ffffff 100%)}
+.museum-comp{position:relative;width:100%;aspect-ratio:2297/573}
+.museum-comp .museum-bg{position:absolute;left:0;top:0;width:100%;height:100%;display:block;opacity:0;pointer-events:none}
+.museum-comp .museum-poster{position:absolute;top:0;height:100%;display:block;border-radius:14px}
+.museum-p1{left:0%;width:17.63%}
+.museum-p2{left:20.64%;width:17.63%}
+.museum-p3{left:41.31%;width:17.63%}
+.museum-p4{left:61.95%;width:17.55%}
+.museum-p5{left:82.5%;width:17.5%}
+
+/* texte */
+.txt{
+  font-family:'Syne Mono',monospace;
+  font-size:clamp(13px,1.1vw,16px);
+  line-height:1.8;
+  color:rgba(0,0,0,.7);
+}
+.txt strong{color:var(--black);font-weight:700}
+.txt em{font-style:italic}
+/* sur-titres gris retirés (gain d'espace, textes remontés) */
+.txt-tag{display:none}
+
+/* MIGRATION — gros titre dans la colonne texte */
+.mig-title{
+  font-family:'Syne Mono',monospace;font-weight:800;text-transform:uppercase;
+  font-size:clamp(34px,4.4vw,72px);line-height:.9;letter-spacing:-.03em;margin-bottom:18px;
+}
+
+/* ── VIDÉOS — Les Interventions ── */
+.vid-head{margin-top:clamp(40px,5vw,76px);margin-bottom:clamp(28px,3.5vw,48px)}
+.vid-name{font-family:'Syne Mono',monospace;font-weight:800;font-size:clamp(30px,4.6vw,64px);letter-spacing:-.02em;line-height:1}
+.vid-sub{margin-top:14px}
+.vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(28px,4vw,56px)}
+.vcell .txt{margin-top:20px}
+.vid-feat{margin-top:clamp(34px,4.5vw,62px);display:grid;grid-template-columns:1.55fr 1fr;gap:clamp(24px,3.5vw,48px);align-items:center}
+.vid-feat .txt{font-size:clamp(11px,0.9vw,14px);line-height:1.55;text-align:left}
+.vid-feat .vid-feat-title{margin-bottom:10px;font-size:clamp(18px,2vw,28px)}
+
+/* player rose (cohérent avec les autres pages — section loutsa de smiirl) */
+.loutsa-vid-wrap{position:relative;border-radius:16px;overflow:hidden;background:#000;cursor:pointer}
+.loutsa-vid-wrap video{width:100%;display:block;border-radius:16px}
+.loutsa-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:16px;z-index:2;pointer-events:none}
+.loutsa-play span{font-family:'Syne Mono',monospace;font-size:clamp(34px,4vw,56px);color:#F9BFDC;line-height:1;user-select:none;opacity:0;transition:opacity .2s}
+.loutsa-vid-wrap:not(.playing):hover .loutsa-play span{opacity:1}
+.brunch-lisaa-ico{position:absolute;bottom:0;right:20px;width:80px;height:auto;opacity:0;transform:rotate(5deg) scale(.8) translateY(calc(50% + 6px));transition:opacity .3s,transform .3s;pointer-events:none;z-index:5}
+.brunch-vid-wrap:hover .brunch-lisaa-ico{opacity:1;transform:rotate(5deg) scale(1) translateY(50%)}
+.loutsa-progress{position:absolute;bottom:0;left:0;width:0%;height:3px;background:#F9BFDC;z-index:4;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:0 2px 2px 0}
+.loutsa-vid-wrap.playing .loutsa-progress{opacity:1}
+.vol-bar{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:8px;background:rgba(249,191,220,.85);backdrop-filter:blur(6px);border-radius:100px;padding:6px 14px;opacity:0;transition:opacity .2s}
+.loutsa-vid-wrap.playing:hover .vol-bar{opacity:1}
+.vol-icon{font-size:13px;color:#111;cursor:pointer;user-select:none;flex-shrink:0;line-height:1}
+.vol-range{-webkit-appearance:none;appearance:none;width:90px;height:3px;border-radius:99px;background:rgba(0,0,0,.2);outline:none;cursor:pointer}
+.vol-range::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#111;cursor:pointer}
+.vol-range::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#111;border:none;cursor:pointer}
+.vid-feat-title{font-family:'Syne Mono',monospace;font-weight:800;font-size:clamp(22px,2.8vw,38px);letter-spacing:-.015em;line-height:1.05;margin-bottom:18px}
+/* Brunch — banner marquee pleine largeur */
+.brunch-banner{overflow:hidden;padding:clamp(12px,1.8vw,22px) 0;margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad))}
+.brunch-marquee{display:inline-block;white-space:nowrap;animation:brunchScroll 40s linear infinite;font-family:'Syne Mono',monospace;font-weight:800;font-size:clamp(32px,4vw,60px);letter-spacing:-.02em;text-transform:uppercase;color:#111}
+@keyframes brunchScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ── FOOTER ── */
+footer{background:var(--black);padding:28px var(--pad) 40px;margin-top:clamp(48px,6vw,90px)}
+.ft-disc{overflow:hidden}
+.ft-run{display:inline-block;animation:ftScroll 42s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(16px,2.4vw,38px);letter-spacing:.04em;text-transform:uppercase;color:var(--lime);white-space:nowrap}
+.ft-line{overflow:hidden;white-space:nowrap}
+@keyframes ftScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ft-logo{display:flex;justify-content:center;margin:20px 0 16px}
+.ft-logo img{height:44px;width:auto}
+.ft-soc{display:flex;justify-content:center;gap:12px}
+.soc{width:40px;height:40px;display:flex;align-items:center;justify-content:center;text-decoration:none}
+.soc img{width:40px;height:40px;object-fit:contain}
+.ft-copy{font-family:'Syne Mono',monospace;font-size:10px;color:var(--lime);text-align:center;margin-top:20px;letter-spacing:.05em;opacity:.7}
+
+/* ── FADE-IN ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.vis{opacity:1;transform:none}
+
+/* ── RESPONSIVE ── */
+/* Kult — sous 700px seulement (mobile), l'intro et la légende passent en flux normal */
+@media(max-width:700px){
+  .pocket-kult .kult-intro{position:static;left:auto;top:auto;width:auto;margin-top:18px;margin-bottom:20px;font-size:13px}
+  .pocket-kult .txt{position:static;left:auto;top:auto;width:auto;margin-top:18px}
+}
+@media(max-width:900px){
+  :root{--pad:24px}
+  .nav-links,.float-nav{display:none}
+  .burger{display:flex}
+  .liso-hero{padding:32px var(--pad) 40px;min-height:auto}
+}
+/* Vrai mobile (téléphone) : repli simplifié, pas d'interaction attendue */
+@media(max-width:767px){
+  .collage{--ch:none}
+  .top2{gap:48px}
+  .sec-row,.sec-row.r-li{flex-direction:column;align-items:stretch;gap:18px}
+  .sec-row .sec-img{max-width:100%;margin:0 auto}
+  .pocket-kolors{padding-bottom:24px;margin-top:24px!important;display:flex;flex-direction:column;align-items:center;gap:16px}
+  /* La compo entière (identique au desktop) est scalée en bloc via JS, pour ne jamais la voir "éclatée" */
+  .kolors-visual{position:relative;overflow:hidden;width:100%}
+  .kolors-visual-inner{position:relative}
+  .pocket-kolors .txt{position:static;width:85%;margin:0 auto;font-size:13px;text-align:center}
+  .sec-pocket .txt{position:static;left:auto;top:auto;width:auto;margin-top:18px}
+  .sec-strip .txt{max-width:100%}
+  .museum-comp{aspect-ratio:auto;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .museum-comp .museum-poster{position:static;height:auto;width:70%;max-width:280px;left:auto;top:auto}
+  .vid-grid{grid-template-columns:1fr;gap:40px}
+  .vid-feat{grid-template-columns:1fr;gap:24px}
+  /* Singles/Expé/Demain (3 colonnes conservées) — repli mobile en 1 colonne, Demain garde sa compo liée (pas empilée) */
+  .singles-comp{max-width:300px}
+  .top2-row{grid-template-columns:1fr;gap:48px}
+  .top2 .txt{margin:16px 0 0!important;text-align:left!important;max-width:90%!important}
+}
+/* Tablette / petit desktop uniquement : sur grand écran, on garde la mise en page pocket d'origine (comme avant) */
+@media(min-width:768px) and (max-width:1700px){
+  .pocket-kolors{padding-bottom:24px}
+  .pocket-kolors .txt{position:static!important;left:auto!important;top:auto!important;width:85%!important;margin:850px auto 0!important;text-align:left!important}
+  .pocket-kolors .kolors-bottles-wrap{position:static!important;right:auto!important;bottom:auto!important;width:220px;margin:16px auto 0}
+  .pocket-kult .kult-intro{position:static!important;left:auto!important;top:auto!important;width:auto!important;margin-bottom:20px}
+}
+</style>
+</head>
+<body>
+
+<nav class="float-nav">
+  <a href="index.html">⌂*✿:·</a>
+  <a href="work.html">°*✶.</a>
+</nav>
+
+<div class="mob" id="mob">
+  <div class="mob-head">
+    <svg width="100" height="65" viewBox="0 0 135 88" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M38.9214 21.4081C41.0735 20.4273 43.6554 20.5237 45.9765 21.419C48.2977 22.3144 50.3158 23.9927 51.3514 26.1155L51.5874 26.5992L51.9483 26.2003C55.2762 22.5161 61.3961 20.2101 66.3288 20.2641C67.3885 20.2757 68.3816 20.4777 69.4986 20.587L69.688 20.6056L69.8109 20.4609C69.889 20.3693 69.9702 20.2789 70.0525 20.1897L70.0514 20.189C71.3182 18.8247 73.5014 17.7579 75.3412 17.4506C75.7466 17.3831 76.1593 17.3411 76.5849 17.2987C77.0067 17.2567 77.4423 17.214 77.8744 17.1441C87.4135 15.6018 97.045 17.4778 104.287 24.2507L104.549 24.4956L104.797 24.2367C105.008 24.0164 105.178 23.7332 105.308 23.5449L105.308 23.5439C110.105 16.6302 120.86 17.3964 125.289 24.4831C126.915 27.116 127.431 30.2852 126.725 33.2986C126.036 36.1874 124.22 38.682 121.681 40.2258L121.678 40.2277C119.579 41.5301 116.737 42.1478 114.278 41.9045C113.329 41.8106 112.532 41.609 111.575 41.3844L111.149 41.2845L111.128 41.7207C111.068 42.9431 110.661 44.7283 110.265 45.9135C108.552 50.939 104.916 55.0825 100.152 57.4364C95.9754 59.495 91.1534 59.8185 86.7402 58.3365L86.3458 58.2034L86.268 58.6128C86.1638 59.159 86.0751 59.6607 85.9306 60.1686L85.9304 60.1716C85.5491 61.5495 84.9828 62.8686 84.2475 64.0933L83.9216 64.6122C81.155 68.7896 76.6546 71.4838 71.8079 72.5841L71.3379 72.6854C65.7438 73.8308 60.1955 72.3036 55.5215 69.101C55.1321 68.8342 54.6767 68.4899 54.258 68.212L54.0922 68.1015L53.9105 68.1828C52.5569 68.7803 51.3815 69.0835 50.2024 69.1458C49.0218 69.2082 47.8165 69.0301 46.4 68.6384L46.0434 68.5389L45.9506 68.8978C45.582 70.3321 45.2974 71.1933 44.4738 72.4111C42.9847 74.6128 40.6761 76.0604 38.0681 76.5654L38.0691 76.5651C35.4392 77.0489 32.7244 76.4767 30.5148 74.9735L30.5138 74.9737C27.9429 73.2191 26.1992 70.4655 25.5706 67.4273C25.4408 66.8 25.3449 66.1492 25.2494 65.485C25.1543 64.8243 25.0603 64.1488 24.9345 63.4896L24.8088 62.8311L24.3248 63.2961C19.6005 67.8391 12.1028 66.8792 8.59802 61.265C7.92346 60.1844 7.69263 59.1524 7.33094 57.8675C6.71806 55.6899 6.38807 53.5411 6.99166 51.393L6.99258 51.3887C8.14278 47.1175 12.066 44.0732 16.4784 43.9111C17.8026 43.8625 18.6885 44.0453 20.0133 44.3978L20.737 44.5911L20.4402 43.9032L20.0685 43.0108C18.6946 39.5716 18.0498 36.4161 19.4483 32.9506C21.4307 28.0387 27.6175 25.7251 32.4835 27.831L32.8637 27.995L32.9779 27.5974C33.8202 24.6613 36.0622 22.5126 38.9013 21.4163L38.9115 21.4126L38.9214 21.4081Z" fill="black"/></svg>
+    <button class="mob-x" id="mobX">✕</button>
+  </div>
+  <div class="mob-nav">
+    <a href="index.html"><span>home ⌂*✿:·</span></a>
+    <a href="work.html"><span>my work °*✶.</span></a>
+    <a href="about.html"><span>about ₊˚౨ৎ˚</span></a>
+  </div>
+</div>
+
+<header>
+  <div class="nav">
+    <a href="index.html"><img src="assets/logo%20liso%20noir.png" alt="Liso Studio"></a>
+    <div class="nav-links">
+      <a href="index.html">home ⌂*✿:·</a>
+      <a href="work.html">my work °*✶.</a>
+      <a href="about.html">about ₊˚౨ৎ˚</a>
+    </div>
+    <button class="burger" id="mobOpen"><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ══════════ HERO PHRASE ══════════ -->
+<section class="liso-hero">
+  <p class="liso-hero-title">
+    HERE LIES SOME <span class="circle-word">CREATIVES</span> RESCUED FROM <span class="strikethrough">FORGOTTEN DRIVES,</span> FROM LONG-DONE JOBS, PERSONAL PROJECT OR<br>PURE CREATIVE IMPULSE.
+    ALWAYS MADE
+    WITH <span class="pink-wavy">INTUITION</span>&nbsp;&amp;&nbsp;<span class="lime-underline">CURIOSITY.°✶·</span>
+  </p>
+</section>
+
+<!-- ══════════ COLLAGE ══════════ -->
+<main class="collage">
+
+  <!-- ════ HAUT : DEUX COLONNES ════ -->
+  <section class="top2 reveal">
+   <div class="top2-row top2-row-3">
+    <div class="item">
+      <div class="singles-comp" id="singlesDeck">
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/monsters%20-%20singles.png" alt=""></div>
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/kkus-doubleslattfslimey3%20-%20singles.png" alt=""></div>
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/capitaine%20-%20singles.png" alt=""></div>
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/final.1.2%20singles.png" alt=""></div>
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/laylow%20-%20singles.png" alt=""></div>
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/fly%20-%20singles.png" alt=""></div>
+        <div class="single-wrap"><img class="single-img" src="assets/page%20liso/png/compositions%20projets/singles/bigger%20no%20rotation/seedn%C3%A9-%20singles.png" alt=""></div>
+      </div>
+      <p class="txt singles-cap" style="margin-top:44px">These are single covers made for several artists and bands from Nice and Paris, between 2018 &amp; 2023. One of my favorite discipline, as the artists trust me on representing them through my own creative instinct, and I love illustration so whenever I get to do those, it&rsquo;s a big plus!</p>
+    </div>
+    <div class="item">
+      <div class="expe-grid" id="expeGrid">
+        <div class="expe-cell" style="left:0%;top:0%"><img class="expe-grid-img" src="assets/page%20liso/png/compositions%20projets/exp%C3%A9/liso%20exp%C3%A9.png" alt=""></div>
+        <div class="expe-cell" style="left:calc(50% + 7px);top:0%"><img class="expe-grid-img" src="assets/page%20liso/png/compositions%20projets/exp%C3%A9/liso%20exp%C3%A9%202.png" alt=""></div>
+        <div class="expe-cell" style="left:0%;top:calc(50% + 7px)"><img class="expe-grid-img" src="assets/page%20liso/png/compositions%20projets/liso_2.jpg" alt=""></div>
+        <div class="expe-cell" style="left:calc(50% + 7px);top:calc(50% + 7px)"><img class="expe-grid-img" src="assets/page%20liso/png/compositions%20projets/exp%C3%A9/soleil%20noir%20exp%C3%A9%20texture%20visuels%20exp%C3%A9%20grille.png" alt=""></div>
+      </div>
+      <p class="txt expe-cap">Some experimenting on the creative suite...</p>
+    </div>
+    <div class="item">
+      <div class="dsm-comp">
+        <div class="dsm-wrap dsm-wrap-1" style="width:56%;left:-3%;top:6%;transform:rotate(-15deg);z-index:1">
+          <img class="dsm-img" src="assets/page%20liso/png/compositions%20projets/demain%20sera%20meilleur%20affiche%202.png" alt="">
+        </div>
+        <div class="dsm-wrap dsm-wrap-2" style="width:52%;left:43%;top:30%;transform:rotate(15deg);z-index:2">
+          <img class="dsm-img" src="assets/page%20liso/png/compositions%20projets/vf.affiche%20demain%20sera%20meilleur%201.png" alt="">
+        </div>
+        <div class="dsm-wrap dsm-wrap-3" style="width:40%;left:50%;top:calc(6% - 20px);transform:rotate(12deg);z-index:0">
+          <img class="dsm-logo-img" src="assets/page%20liso/png/compositions%20projets/demain%20sera%20meilleur%20typo%20logo.png" alt="">
+        </div>
+      </div>
+      <p class="txt dsm-caption" style="margin-top:30px;text-align:left;max-width:34ch">
+        <span class="txt-tag">2021 · Film Promotion</span>
+        These posters were created at the request of a Parisian collective to promote their short film "Demain sera meilleur"<strong>*</strong> in 2021.<br>
+        <strong>*</strong>Tomorrow will be better
+      </p>
+    </div>
+   </div>
+  </section>
+
+  <!-- KOLORS — collage + bouteilles (shake) + texte dans le creux -->
+  <section class="sec pocket-kolors reveal" style="margin-top:clamp(-40px,-2vw,20px)">
+    <div class="kolors-visual">
+     <div class="kolors-visual-inner">
+      <div class="kolors-left" style="opacity:0;pointer-events:none">
+        <img class="kolors-collage" src="assets/page%20liso/png/compositions%20projets/kolors.png" alt="Kolors">
+      </div>
+      <img class="kolors-brassophia" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/bouteillekolorsbrassophia.png" alt="">
+      <img class="kolors-cans1" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/kolors%201%20cans.png" alt="">
+      <img class="kolors-framboises" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/framboisessureau.png" alt="">
+      <img class="kolors-handmade" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/liso%20kolors%20handmade.png" alt="">
+      <img class="kolors-cangreen" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/can%20kolors%20png.png" alt="">
+      <img class="kolors-rainbow" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/Kolors%20par%20Lisa%20Fernandes%20carte%20cans%202%20rainbow.png" alt="">
+      <img class="kolors-typo" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/cans%20typo%20kolors.png" alt="">
+      <img class="kolors-peche" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/pechehibiscus.png" alt="">
+      <img class="kolors-3cans" src="assets/page%20liso/png/compositions%20projets/kolors%20solo/Kolors%203%20cans%20carte.png" alt="">
+      <div class="kolors-bottles-wrap"><img class="kolors-bottles" src="assets/page%20liso/png/compositions%20projets/kolors%20bottles%20png%20shake%20motion.png" alt=""></div>
+     </div>
+    </div>
+    <div class="txt">
+      <span class="txt-tag">2018 · First-Year Project · Packaging</span>
+      Kolors is my final project for my first year of Licence in Graphic Design &amp; Print Media. I designed everything, from the concept to the packaging and print campaigns, in 2018. Kolors is a beer flavored with fruits and herbs, distributed by Kronenbourg with the aim of revamping its image among the general public, especially young adults.<br><br>
+      Looking back, the branding is perhaps a little too acid-pop and could attract the wrong target. However, I really love this project graphically, it was my first real graphic design project where I had Carte blanche on every detail, from client to brand direction, and I just started to learn digital creative tools, so I did a lot of experimenting and manual work to provide real life mock ups of the bottles.
+    </div>
+  </section>
+
+  <!-- KULT — texte calé dans le creux blanc (bas-gauche) -->
+  <section class="sec sec-pocket pocket-kult reveal">
+    <div class="kult-vid">
+      <video src="assets/page%20liso/videos/kult.mp4" autoplay muted loop playsinline preload="auto"></video>
+    </div>
+    <div class="kult-intro">Kult was a media outlet specializing in underground and urban culture. We organized cultural and musical events in iconic venues such as the MAMAC and Le 109. With Jump Arounds, showcases and block parties, Kult got the youth of Nice moving for a solid three years, in a city where young people and urban initiatives can sometimes be stifled. I proudly represented my role as the association's Graphic Designer from 2019 to 2021!</div>
+    <img class="sec-img" src="assets/page%20liso/png/compositions%20projets/kult.png" alt="Kult">
+    <div class="kult-hot"><span class="kult-tip">This poster's creation was possible thanks to @Calypsau's marvellous illustration! ✶.</span></div>
+    <div class="kult-hot2"><span class="kult-tip kult-tip--wide">a Nice Matin's piece about a Block Party Kult organized at La Menuiserie, where there was a grill party, a live stage, a thrifting area, nail techs and tooth gems stands. It gathered a lot of people and the local news' attention!</span></div>
+    <div class="kult-hot3"><span class="kult-tip kult-tip--wide">Luidji, french artist, certified Gold &amp; Platinum, at a Kult Jump Around 💿</span></div>
+    <div class="txt">
+      <span class="txt-tag">Event & Branding · Nice</span>
+      It was an amazing adventure, in which a group of super fun humans trusted me to manage the identity of this association, full of meaning, good intentions, passion and rythm! Like the MAMAC forecourt, Kult is no more, for now. However, the association shook up Nice's youth and was highly successful, even booking iconic venues such as le 109, a hub for contemporary culture in Nice, or even certified and beloved artists. Thank you to the whole team for this journey we've taken together, and a special thank you to Alex &amp; Océane! &lt;3
+    </div>
+  </section>
+
+  <!-- MIGRATION — texte calé dans le creux blanc (gauche) -->
+  <section class="sec sec-pocket pocket-migration reveal" style="margin-top:clamp(20px,2vw,60px);margin-bottom:clamp(140px,10vw,220px)">
+    <img class="sec-img" src="assets/page%20liso/png/compositions%20projets/newcompmigrationPNGS.png" alt="Migration">
+    <div class="txt">
+      <span class="txt-tag">Editorial & Publishing</span>
+      <strong>Migration is a design and publishing project</strong> I did during my second year of Licence in Graphic Design &amp; Print Media. It has three axis with three intentions.
+      The <strong>yellow one</strong> plays with geometry, where everything fits like a puzzle you assemble as you read. The <strong>red one</strong> highlights the daily ordeal of migrants, through a cryptic layout that requires effort from the reader. The <strong>blue one</strong> highlights the human aspect, with impactful <span style="white-space:nowrap">double-page</span> images linked to crucial information.
+    </div>
+  </section>
+
+  <!-- MUSEUM — frise panoramique pleine largeur, texte dessous -->
+  <section class="sec sec-strip reveal">
+    <div class="museum-comp">
+      <img class="museum-bg" src="assets/page%20liso/png/compositions%20projets/museum.png" alt="Museum">
+      <img class="museum-poster museum-p1" src="assets/page%20liso/png/compositions%20projets/museum%20solo/museum%201.png" alt="">
+      <img class="museum-poster museum-p2" src="assets/page%20liso/png/compositions%20projets/museum%20solo/museum%202.png" alt="">
+      <img class="museum-poster museum-p3" src="assets/page%20liso/png/compositions%20projets/museum%20solo/museum%203.png" alt="">
+      <img class="museum-poster museum-p4" src="assets/page%20liso/png/compositions%20projets/museum%20solo/museum%204.png" alt="">
+      <img class="museum-poster museum-p5" src="assets/page%20liso/png/compositions%20projets/museum%20solo/museum%205.png" alt="">
+    </div>
+    <div class="txt">
+      <span class="txt-tag">Muséum d'Histoire Naturelle de Nice · Campaign</span>
+      The following posters were created during my second year of Licence in Graphic Design &amp; Print Media. The <strong>Natural History Museum of Nice</strong> has a reputation for being a somewhat outdated museum. For me, it was the dusty museum I had visited in elementary school. No kid in school wanted to go there, we were spooked about the old furniture, dusty frames and stuffed animals. The brief was to create an offbeat campaign to boost communication and attract young visitors to this museum steeped in history, and shake off this outdated reputation by being fun and slighty offbeat compared to usual museum campaigns. There are a few axis I went for, experimenting with drawing, handmade typography and a lot of&nbsp;psd.
+    </div>
+  </section>
+
+  <!-- ILLUSTRATIONS — PNG en haut, texte dessous -->
+  <section class="sec sec-strip illus-sec reveal" style="margin-top:clamp(10px,1.5vw,20px)">
+    <img class="sec-img" src="assets/page%20liso/png/compositions%20projets/illustrations.png?v=4" alt="Illustrations">
+    <div class="txt" style="font-size:clamp(15px,1.3vw,19px)">
+      <span class="txt-tag">Ongoing · Personal Work</span>
+      Illustration is my very first passion.✿ My father is an industrial designer, I've seen him draw all my life, and he inspired me to pick up a pencil at an early age. I took classes when I was younger, but I didn't like the rigor involved; I preferred drawing little heads, flowers, and doodling in general. I hadn't yet understood the importance of technique, but I'd gotten the importance of creativity and letting go already. °*✶.
+    </div>
+  </section>
+
+  <!-- VIDÉOS — Les Interventions -->
+  <section class="reveal" style="margin-top:clamp(40px,5vw,80px)">
+    <!-- Featured — Le Brunch Collaboratif -->
+    <div class="brunch-banner">
+      <span class="brunch-marquee">THE COLLABORATIVE BRUNCH ✿ &nbsp;&nbsp;&nbsp; THE COLLABORATIVE BRUNCH ✿ &nbsp;&nbsp;&nbsp; THE COLLABORATIVE BRUNCH ✿ &nbsp;&nbsp;&nbsp; THE COLLABORATIVE BRUNCH ✿ &nbsp;&nbsp;&nbsp; THE COLLABORATIVE BRUNCH ✿ &nbsp;&nbsp;&nbsp; THE COLLABORATIVE BRUNCH ✿ &nbsp;&nbsp;&nbsp;</span>
+    </div>
+    <div class="vid-feat">
+      <div class="brunch-vid-wrap" style="position:relative">
+        <div class="loutsa-vid-wrap">
+          <video src="assets/page%20liso/videos/Le%20Brunch%20Collaboratif%20Lisa.mp4" playsinline preload="metadata"></video>
+          <div class="loutsa-play"><span>▶</span></div>
+        </div>
+        <img class="brunch-lisaa-ico" src="assets/icons/logolisaa.png" alt="">
+      </div>
+      <div>
+        <p class="txt">This fictional commercial was made in 2021 as part of my Masters' degree' advertising workshop.<br><br>The brief: <strong>Imagine, storyboard, film, and edit a fictional commercial for Deezer.</strong><br><br>I made it with my friends Louise, Caroline, and Faratina, as per usual! We started with a simple observation: despite our very different musical (and fashion) styles, we got along really well right away, and we were inseparable at the first time we teamed up.<br><br>The idea behind the commercial was to depict a group of friends in their everyday lives. Each one listens to her favorite music until one of them shares a song with the others via a collaborative playlist. The friends receive a notification, play the music on their way to meet up, and end up at one of their homes for a collaborative brunch, their weekend get-together.<br><br>This commercial highlights the shared playlist feature on Deezer, and above all, the connection it can create between people.<br><br>Many thanks to the girls for this project and these beautiful digital memories of our Master's years. &lt;3</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="ft-disc">
+    <div class="ft-line"><span class="ft-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
+    <div class="ft-line"><span class="ft-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  </div>
+  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio"></div>
+  <div class="ft-soc">
+    <a href="https://www.behance.net/lfnds" target="_blank" class="soc"><img src="assets/icons/Behance/lime.png" alt="Behance"></a>
+    <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc"><img src="assets/icons/Pinterest/lime.png" alt="Pinterest"></a>
+    <a href="https://www.linkedin.com" target="_blank" class="soc"><img src="assets/icons/LinkedIN/lime.png" alt="LinkedIn"></a>
+  </div>
+  <p class="ft-copy">lisostudio® 2026</p>
+</footer>
+
+<script>
+const mob=document.getElementById('mob');
+if(mob){
+  document.getElementById('mobOpen').onclick=()=>{mob.classList.add('open');document.body.style.overflow='hidden'};
+  document.getElementById('mobX').onclick=()=>{mob.classList.remove('open');document.body.style.overflow=''};
+}
+// Scroll reveal
+const io=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis')})},{threshold:.06});
+document.querySelectorAll('.reveal,.liso-hero').forEach(el=>io.observe(el));
+
+// Singles — pile de covers, swipe façon Tinder
+(function(){
+  var deck=document.getElementById('singlesDeck');
+  if(!deck)return;
+  var cards=Array.from(deck.querySelectorAll('.single-wrap'));
+  var n=cards.length;
+
+  function layout(animated){
+    cards.forEach(function(card,depth){
+      card.style.transition=animated?'transform .45s cubic-bezier(.34,1.56,.64,1)':'none';
+      card.style.zIndex=n-depth;
+      card.style.opacity=depth<5?'1':'0';
+      card.style.transform='translate('+(depth*7)+'px,'+(depth*7)+'px)';
+      card.style.cursor=depth===0?'grab':'default';
+    });
+  }
+  layout(false);
+
+  var startX=0,startY=0,dx=0,dy=0,dragging=false,topCard=null;
+
+  function onDown(e){
+    topCard=cards[0];
+    var p=e.touches?e.touches[0]:e;
+    startX=p.clientX;startY=p.clientY;dx=0;dy=0;dragging=true;
+    topCard.style.transition='none';
+    topCard.style.cursor='grabbing';
+  }
+  function onMove(e){
+    if(!dragging)return;
+    var p=e.touches?e.touches[0]:e;
+    dx=p.clientX-startX;dy=p.clientY-startY;
+    topCard.style.transform='translate('+dx+'px,'+dy+'px)';
+    topCard.style.opacity=String(1-Math.min(Math.abs(dx)/400,0.5));
+  }
+  function onUp(){
+    if(!dragging)return;
+    dragging=false;
+    if(Math.abs(dx)>90){
+      sendToBack();
+    }else{
+      topCard.style.transition='transform .35s cubic-bezier(.34,1.56,.64,1)';
+      topCard.style.transform='translate(0,0)';
+      topCard.style.opacity='1';
+      topCard.style.cursor='grab';
+    }
+  }
+  function sendToBack(){
+    topCard.style.zIndex=1;
+    topCard.style.transition='transform .45s cubic-bezier(.34,1.56,.64,1), opacity .45s ease';
+    topCard.style.transform='translate('+((n-1)*7)+'px,'+((n-1)*7)+'px)';
+    topCard.style.opacity='0';
+    setTimeout(function(){
+      cards.push(cards.shift());
+      layout(false);
+    },450);
+  }
+
+  deck.addEventListener('mousedown',onDown);
+  document.addEventListener('mousemove',onMove);
+  document.addEventListener('mouseup',onUp);
+  deck.addEventListener('touchstart',onDown,{passive:true});
+  deck.addEventListener('touchmove',onMove,{passive:true});
+  deck.addEventListener('touchend',onUp);
+
+  deck.addEventListener('click',function(e){
+    if(Math.abs(dx)>5)return; // c'était un drag, pas un tap
+    topCard=cards[0];
+    sendToBack();
+  });
+})();
+
+// Demain — apparition au scroll
+const dsmComp=document.querySelector('.dsm-comp');
+if(dsmComp){
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){e.target.classList.add('vis');this.unobserve(e.target);}
+    }.bind(this));
+  },{threshold:0,rootMargin:'200px'}).observe(dsmComp);
+}
+
+// Drag lerp réutilisable, cantonné à un conteneur
+function dragLerpSection(secSel,itemsSel){
+  var sec=document.querySelector(secSel);
+  if(!sec)return;
+  var items=[];
+  var active=null;
+
+  sec.querySelectorAll(itemsSel).forEach(function(el){
+    var baseT=el.style.transform||'';
+    var s={following:false,origCx:0,origCy:0,tx:0,ty:0,cx:0,cy:0,raf:null};
+    items.push({el:el,s:s,base:baseT});
+    el.style.cursor='grab';
+
+    function tick(){
+      s.cx+=(s.tx-s.cx)*0.12;
+      s.cy+=(s.ty-s.cy)*0.12;
+      el.style.transform=baseT+' translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';
+      if(s.following||Math.abs(s.tx-s.cx)>0.1||Math.abs(s.ty-s.cy)>0.1)s.raf=requestAnimationFrame(tick);
+      else s.raf=null;
+    }
+
+    el.addEventListener('mousedown',function(e){
+      e.preventDefault();
+      var r=el.getBoundingClientRect();
+      var t=getComputedStyle(el).transform;
+      var m=(t&&t!=='none')?new DOMMatrix(t):new DOMMatrix();
+      s.origCx=r.left+r.width/2-m.m41;
+      s.origCy=r.top+r.height/2-m.m42;
+      s.following=true;active=s;
+      el.style.transition='none';el.style.cursor='grabbing';
+      if(!s.raf)s.raf=requestAnimationFrame(tick);
+    });
+  });
+
+  // Mouvement cantonné à la section
+  sec.addEventListener('mousemove',function(e){
+    items.forEach(function(it){
+      if(!it.s.following)return;
+      it.s.tx=e.clientX-it.s.origCx;
+      it.s.ty=e.clientY-it.s.origCy;
+    });
+  });
+
+  // Mouseup global pour relâcher
+  document.addEventListener('mouseup',function(){
+    items.forEach(function(it){
+      if(!it.s.following)return;
+      it.s.following=false;
+      it.el.style.cursor='grab';
+    });
+    active=null;
+  });
+
+  // Snap back quand la souris quitte la section
+  sec.addEventListener('mouseleave',function(){
+    items.forEach(function(it){
+      it.s.following=false;
+      it.s.tx=0;it.s.ty=0;it.s.cx=0;it.s.cy=0;
+      it.el.style.cursor='grab';
+      it.el.style.transition='transform .7s cubic-bezier(.34,1.56,.64,1)';
+      it.el.style.transform=it.base;
+      if(it.s.raf){cancelAnimationFrame(it.s.raf);it.s.raf=null;}
+    });
+  });
+}
+dragLerpSection('.museum-comp','.museum-poster');
+
+// Kolors bottles — zoom smooth organique (réutilisable)
+function kolorsZoomHover(wrapSel,imgSel,baseRotate,targetIn){
+  var wrap=document.querySelector(wrapSel);
+  var img=document.querySelector(imgSel);
+  if(!wrap||!img)return;
+  var TARGET_IN=targetIn||1.38,TARGET_OUT=1;
+  var EASE_IN=0.032,EASE_OUT=0.014;
+  var scale=1,hovered=false,raf=null;
+  var rot=baseRotate?baseRotate+'deg':'0deg';
+
+  function animate(){
+    var target=hovered?TARGET_IN:TARGET_OUT;
+    var ease=hovered?EASE_IN:EASE_OUT;
+    scale+=(target-scale)*ease;
+    img.style.transform='rotate('+rot+') scale('+scale+')';
+    if(Math.abs(scale-target)>0.0004){
+      raf=requestAnimationFrame(animate);
+    }else{
+      scale=target;
+      img.style.transform='rotate('+rot+') scale('+scale+')';
+      raf=null;
+    }
+  }
+
+  wrap.addEventListener('mouseenter',function(){
+    hovered=true;
+    if(!raf)raf=requestAnimationFrame(animate);
+  });
+  wrap.addEventListener('mouseleave',function(){
+    hovered=false;
+    if(!raf)raf=requestAnimationFrame(animate);
+  });
+}
+// Kolors — sur mobile, on scale toute la compo en un seul bloc (comme desktop en miniature) pour ne jamais l'avoir "éclatée"
+(function(){
+  var wrap=document.querySelector('.kolors-visual');
+  var inner=document.querySelector('.kolors-visual-inner');
+  if(!wrap||!inner)return;
+  var DESIGN_WIDTH=1000;
+  function apply(){
+    if(window.innerWidth>767){
+      inner.style.width='';
+      inner.style.transform='';
+      wrap.style.height='';
+      return;
+    }
+    inner.style.transform='none';
+    inner.style.width=DESIGN_WIDTH+'px';
+    var naturalHeight=inner.offsetHeight;
+    var scale=wrap.clientWidth/DESIGN_WIDTH;
+    inner.style.transformOrigin='top left';
+    inner.style.transform='scale('+scale+')';
+    wrap.style.height=(naturalHeight*scale)+'px';
+  }
+  apply();
+  window.addEventListener('resize',apply);
+})();
+kolorsZoomHover('.kolors-bottles-wrap','.kolors-bottles',0,1.38);
+kolorsZoomHover('.dsm-wrap-1','.dsm-wrap-1',-15,1.25);
+kolorsZoomHover('.dsm-wrap-2','.dsm-wrap-2',15,1.25);
+kolorsZoomHover('.dsm-wrap-3','.dsm-wrap-3',12,1.3);
+
+// Expé — 4 cases fixes, au clic chacune fait défiler d'autres photos expé (pool élargi)
+(function(){
+  var grid=document.getElementById('expeGrid');
+  if(!grid)return;
+  var cells=Array.from(grid.querySelectorAll('.expe-cell'));
+  var pool=[
+    'assets/page%20liso/png/compositions%20projets/exp%C3%A9/liso%20exp%C3%A9.png',
+    'assets/page%20liso/png/compositions%20projets/exp%C3%A9/liso%20exp%C3%A9%202.png',
+    'assets/page%20liso/png/compositions%20projets/liso_2.jpg',
+    'assets/page%20liso/png/compositions%20projets/exp%C3%A9/soleil%20noir%20exp%C3%A9%20texture%20visuels%20exp%C3%A9%20grille.png',
+    'assets/page%20liso/png/compositions%20projets/exp%C3%A9/Liso%20exp%C3%A9%20jul%202.png',
+    'assets/page%20liso/png/compositions%20projets/exp%C3%A9/exp%C3%A9jullisomala.png'
+  ];
+  var nextIndex=cells.length; // les 4 premières images du pool sont déjà affichées dans les 4 cases
+  var currentIndex=cells.map(function(_,i){return i;}); // index pool actuellement affiché par chaque case
+  cells.forEach(function(cell,i){
+    var img=cell.querySelector('.expe-grid-img');
+    cell.addEventListener('click',function(){
+      // on saute les index déjà affichés ailleurs pour ne jamais avoir 2x la même image
+      var tries=0,idx;
+      do{
+        idx=nextIndex%pool.length;
+        nextIndex++;
+        tries++;
+      }while(currentIndex.some(function(ci,j){return j!==i&&ci===idx;})&&tries<pool.length);
+      currentIndex[i]=idx;
+      var newSrc=pool[idx];
+      img.style.opacity='0';
+      setTimeout(function(){
+        img.src=newSrc;
+        img.style.opacity='1';
+      },260);
+    });
+  });
+})();
+kolorsZoomHover('.kolors-brassophia','.kolors-brassophia',-2,1.05);
+
+// Player rose pour les vidéos "Les Interventions" (play + son + progression)
+var loutsaObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    if(!e.isIntersecting){
+      var v=e.target.querySelector('video');
+      if(v&&!v.paused){v.pause();e.target.classList.remove('playing');if(loutsaActive===v)loutsaActive=null;}
+    }
+  });
+},{threshold:0.2});
+var loutsaActive=null;
+document.querySelectorAll('.loutsa-vid-wrap').forEach(function(wrap){
+  var vid=wrap.querySelector('video');
+  vid.loop=true;
+
+  var volBar=document.createElement('div');volBar.className='vol-bar';volBar.style.display='none';
+  var volIcon=document.createElement('span');volIcon.className='vol-icon';volIcon.textContent='🔇';
+  var volRange=document.createElement('input');volRange.className='vol-range';volRange.type='range';volRange.min=0;volRange.max=1;volRange.step=0.01;volRange.value=0;
+  volBar.appendChild(volIcon);volBar.appendChild(volRange);wrap.appendChild(volBar);
+  volBar.addEventListener('click',function(e){e.stopPropagation();});
+  volBar.addEventListener('mousedown',function(e){e.stopPropagation();});
+
+  var prog=document.createElement('div');prog.className='loutsa-progress';wrap.appendChild(prog);
+  vid.addEventListener('timeupdate',function(){if(vid.duration)prog.style.width=(vid.currentTime/vid.duration*100)+'%';});
+  vid.addEventListener('loadedmetadata',function(){
+    vid.currentTime=0.001;
+    if((vid.audioTracks&&vid.audioTracks.length>0)||vid.mozHasAudio)volBar.style.display='flex';
+  });
+  vid.addEventListener('playing',function(){
+    if(volBar.style.display==='flex')return;
+    if(vid.webkitAudioDecodedByteCount>0)volBar.style.display='flex';
+  },{once:true});
+
+  volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.volume===0?'🔇':'🔊';});
+  volRange.addEventListener('click',function(e){e.stopPropagation();});
+  volIcon.addEventListener('click',function(e){
+    e.stopPropagation();
+    vid.muted=!vid.muted;
+    if(!vid.muted&&vid.volume===0){vid.volume=0.2;volRange.value=0.2;}
+    volIcon.textContent=vid.muted?'🔇':'🔊';
+    volRange.value=vid.muted?0:vid.volume;
+  });
+
+  wrap.addEventListener('click',function(){
+    if(vid.paused){
+      if(loutsaActive&&loutsaActive!==vid){loutsaActive.pause();loutsaActive.closest('.loutsa-vid-wrap').classList.remove('playing');}
+      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;
+      vid.play();wrap.classList.add('playing');loutsaActive=vid;
+    } else {
+      vid.pause();wrap.classList.remove('playing');loutsaActive=null;
+    }
+  });
+  vid.addEventListener('ended',function(){wrap.classList.remove('playing');if(loutsaActive===vid)loutsaActive=null;});
+
+  loutsaObserver.observe(wrap);
+});
+
+// Kult — vidéo derrière la compo : autoplay muet en boucle + curseur son rose (au survol)
+(function(){
+  var wrap=document.querySelector('.kult-vid');
+  if(!wrap) return;
+  var vid=wrap.querySelector('video');
+  vid.muted=true; vid.loop=true; vid.playsInline=true;
+
+  var volBar=document.createElement('div');volBar.className='vol-bar';
+  var volIcon=document.createElement('span');volIcon.className='vol-icon';volIcon.textContent='🔇';
+  var volRange=document.createElement('input');volRange.className='vol-range';volRange.type='range';volRange.min=0;volRange.max=1;volRange.step=0.01;volRange.value=0;
+  volBar.appendChild(volIcon);volBar.appendChild(volRange);wrap.appendChild(volBar);
+
+  volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.muted?'🔇':'🔊';});
+  volIcon.addEventListener('click',function(e){
+    e.stopPropagation();
+    vid.muted=!vid.muted;
+    if(!vid.muted&&vid.volume===0){vid.volume=0.4;volRange.value=0.4;}
+    volIcon.textContent=vid.muted?'🔇':'🔊';
+    volRange.value=vid.muted?0:vid.volume;
+  });
+
+  var p=vid.play(); if(p&&p.catch)p.catch(function(){});
+  new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){var q=vid.play();if(q&&q.catch)q.catch(function(){});}
+    else vid.pause();
+  });},{threshold:0.2}).observe(wrap);
+})();
+
+// Footer icons — smooth lerp follow, stay on leave, reset on footer exit
+(function(){
+  var items = [];
+  document.querySelectorAll('.ft-soc .soc').forEach(function(icon){
+    var s = { following: false, origCx: 0, origCy: 0, tx: 0, ty: 0, cx: 0, cy: 0, raf: null };
+    items.push({ icon: icon, s: s });
+    icon.style.cursor = 'grab';
+
+    function tick() {
+      s.cx += (s.tx - s.cx) * 0.12;
+      s.cy += (s.ty - s.cy) * 0.12;
+      icon.style.transform = 'translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px)';
+      if (s.following || Math.abs(s.tx - s.cx) > 0.1 || Math.abs(s.ty - s.cy) > 0.1) {
+        s.raf = requestAnimationFrame(tick);
+      } else {
+        s.raf = null;
+      }
+    }
+
+    icon.addEventListener('mouseenter', function(){
+      var r = icon.getBoundingClientRect();
+      var t = getComputedStyle(icon).transform;
+      var m = (t && t !== 'none') ? new DOMMatrix(t) : new DOMMatrix();
+      s.origCx = r.left + r.width/2 - m.m41;
+      s.origCy = r.top  + r.height/2 - m.m42;
+      s.following = true;
+      icon.style.transition = 'none';
+      icon.style.cursor = 'grabbing';
+      if (!s.raf) s.raf = requestAnimationFrame(tick);
+    });
+
+    icon.addEventListener('mouseleave', function(){
+      s.following = false;
+      icon.style.cursor = 'grab';
+    });
+
+    document.addEventListener('mousemove', function(e){
+      if (!s.following) return;
+      s.tx = e.clientX - s.origCx;
+      s.ty = e.clientY - s.origCy;
+    });
+  });
+
+  var ft = document.querySelector('footer');
+  if (ft) ft.addEventListener('mouseleave', function(){
+    items.forEach(function(it){
+      it.s.following = false;
+      it.s.tx = 0; it.s.ty = 0;
+      it.icon.style.cursor = 'grab';
+      it.icon.style.transition = 'transform .7s cubic-bezier(.34,1.56,.64,1)';
+      it.icon.style.transform = 'translate(0,0)';
+      it.s.cx = 0; it.s.cy = 0;
+      if (it.s.raf) { cancelAnimationFrame(it.s.raf); it.s.raf = null; }
+    });
+  });
+})();
+</script>
+</body>
+</html>
