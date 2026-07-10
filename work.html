@@ -146,7 +146,8 @@ body{background:#e8e4de;color:var(--black)}
     <span class="pw" data-href="eudemonia.html" data-sticker="assets/eudemoniagif.gif"> eudemonia*</span>
     <span class="pw" data-href="foodmatcher.html" data-sticker="assets/fmgif.gif" data-size="large"> foodmatcher*</span><br>
     <span class="pw" data-href="noplastic.html" data-sticker="assets/noplasticgif.gif" data-size="large">noplastic*</span>
-    <span class="pw" data-href="liso.html" data-sticker="assets/lisogif.gif"> liso*</span>
+    <span class="pw" data-href="liso.html" data-sticker="assets/lisogif.gif"> liso*</span><br>
+    <span class="pw" data-href="redlightforhouse.html" data-sticker="assets/gif%20rlfh.gif" data-size="medium">red light for house*</span>
   </div>
 </section>
 <div class="arc-w" id="arcW">
@@ -214,7 +215,7 @@ document.querySelectorAll('.pw').forEach(w=>{
     if(activeImg) activeImg.style.display='none';
     const img=stickerImgs[w.dataset.sticker];
     if(img){
-      const sz=w.dataset.size==='large'?'340px':'220px';
+      const sz=w.dataset.size==='large'?'340px':(w.dataset.size==='medium'?'238px':'220px');
       img.style.width=sz; img.style.height=sz;
       img.style.display='block'; activeImg=img;
     }
