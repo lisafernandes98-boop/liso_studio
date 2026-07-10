@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 :root{--lime:#C8F55A;--black:#111}
 body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 
@@ -101,6 +101,12 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
   .cinema-wrap{width:90vw}
   #vlib{padding:48px 20px 0}
   .vlib-grid{columns:1;column-gap:0}
+  .vlib-grid.filtered{columns:1}
+  .vlib-grid.filtered-topo,.vlib-grid.filtered-misc{display:block}
+  .vlib-grid.filtered-topo .vlib-item,.vlib-grid.filtered-misc .vlib-item{width:100%;flex:none}
+  .vlib-grid.filtered-claws{display:block;height:auto}
+  .vlib-grid.filtered-claws .vlib-item{width:100%}
+  .vlib-grid.filtered-claws .vlib-wrap{height:auto;aspect-ratio:3/2}
   .vlib-wrap{border-radius:28px}
   .vh-gif,.vh-inline-gif,.vlib-ico{display:none}
 }
