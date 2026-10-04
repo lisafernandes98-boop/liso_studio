@@ -53,33 +53,75 @@ footer{background:var(--black);padding:28px 48px 40px}
   .ft-disc p{font-size:10px}
 }
 
-body{background:
-  radial-gradient(ellipse 100% 80% at 0% 10%, var(--pink) 0%, rgba(249,191,220,.4) 45%, transparent 70%),
-  radial-gradient(ellipse 90% 85% at 100% 90%, var(--pink) 0%, rgba(249,191,220,.5) 40%, transparent 68%),
-  radial-gradient(ellipse 70% 60% at 60% 0%, rgba(249,191,220,.9) 0%, transparent 55%),
-  radial-gradient(ellipse 50% 40% at 20% 60%, rgba(249,191,220,.6) 0%, transparent 60%),
-  #fff}
-.about-layout{padding:80px 48px 64px;display:grid;grid-template-columns:360px 1fr;gap:56px;align-items:start}
-.about-left{}
-.liso-q{font-family:'Syne',sans-serif;font-size:clamp(42px,6vw,72px);font-weight:800;letter-spacing:-.05em;line-height:.88;margin-bottom:10px}
-.liso-line{display:block;width:200px;height:4px;background:var(--black);border-radius:2px;margin-bottom:24px}
-.liso-meta{font-family:'Syne Mono',monospace;font-size:13px;line-height:2;color:rgba(0,0,0,.65)}
-.sticker-block{margin-top:28px;position:relative;width:320px;height:300px;overflow:visible}
-#stickerImg{width:260px;height:300px;object-fit:contain;object-position:left center;position:absolute;left:0;top:0}
-.soc-float{position:absolute;display:block;width:64px;height:64px;transition:transform .15s ease;cursor:pointer}
-.soc-float img{width:100%;height:100%;display:block;object-fit:contain}
-.bio-text{font-family:'Syne Mono',monospace;font-size:13px;line-height:1.65;color:rgba(0,0,0,.75)}
-.bio-text p{margin-bottom:12px}
-.bio-text p:last-child{margin-bottom:0}
-/* FUNDAMENTALS */
-.fundamentals{background:transparent;padding:80px 48px}
-.fund-title{font-family:'Syne',sans-serif;font-size:clamp(26px,3.8vw,54px);font-weight:800;letter-spacing:-.02em;text-transform:uppercase;line-height:1.1;margin-bottom:64px}
+body{background:var(--bg)}
+header{background:var(--pink)}
+
+/* HERO INTRO */
+.about-hero{padding:140px 48px 80px;position:relative;background:var(--pink)}
+.ah-inner{max-width:1400px;margin:0 auto}
+.ah-top{display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap}
+.ah-title-wrap{position:relative;display:inline-block}
+.ah-title{font-family:'Syne',sans-serif;font-size:clamp(100px,16vw,240px);font-weight:800;letter-spacing:-.05em;line-height:.8;cursor:default}
+.ah-title-base{position:relative;color:var(--black);transition:color .3s ease}
+.ah-title-wrap:hover .ah-title-base{color:var(--pink)}
+.ah-title-spot{position:absolute;left:0;top:0;color:var(--black);pointer-events:none;-webkit-mask-image:radial-gradient(circle 170px at var(--mx,50%) var(--my,-9999px),#000 0%,transparent 72%);mask-image:radial-gradient(circle 170px at var(--mx,50%) var(--my,-9999px),#000 0%,transparent 72%)}
+.ah-reveal{position:absolute;top:50%;left:calc(100% + 32px);width:min(38vw,400px);height:min(34vw,360px);pointer-events:none;opacity:0;transform:translateY(-46%) scale(.88) rotate(-6deg);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);z-index:5}
+.ah-reveal img{width:100%;height:100%;object-fit:contain}
+.ah-title-wrap:hover .ah-reveal{opacity:1;transform:translateY(-50%) scale(1) rotate(0deg)}
+.ah-social{display:flex;gap:18px;align-items:center}
+.ah-soc{display:block;width:56px;height:56px;transition:transform .15s ease;cursor:pointer}
+.ah-soc img{width:100%;height:100%;display:block;object-fit:contain}
+.ah-stats{display:flex;gap:72px;flex-wrap:wrap;margin-top:64px;padding-top:32px;border-top:2px solid var(--black)}
+.ah-stat{display:flex;flex-direction:column;gap:8px}
+.ah-num{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(28px,3vw,44px);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.ah-label{font-family:'Syne Mono',monospace;font-size:15px;letter-spacing:.04em;text-transform:uppercase;color:rgba(0,0,0,.65)}
+
+/* REVEAL ON SCROLL */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.reveal.in-view{opacity:1;transform:translateY(0)}
+
+/* BIO */
+.bio-sec{padding:88px 48px 100px;background:var(--pink)}
+.bio-inner{max-width:1400px;margin:0 auto}
+.bio-lead{font-family:'Syne',sans-serif;font-weight:700;font-size:clamp(26px,3.3vw,42px);letter-spacing:-.02em;line-height:1.3;max-width:1100px;margin-bottom:64px}
+.bio-lead strong{font-weight:800}
+.bio-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 72px}
+.bio-grid p{font-family:'Syne Mono',monospace;font-size:16px;line-height:1.7;color:rgba(0,0,0,.82);margin-bottom:24px}
+.bio-grid p:last-child{margin-bottom:0}
+.bio-grid strong{color:var(--black);font-weight:700}
+.bio-tags{display:flex;flex-wrap:wrap;gap:12px;margin-top:56px}
+.bio-tag{position:relative;display:inline-block;font-family:'Syne',sans-serif;font-weight:500;font-size:15px;letter-spacing:.01em;text-transform:uppercase;padding:12px 26px;border:3px solid var(--black);border-radius:100px;background:var(--pink);cursor:default;will-change:transform}
+
+/* FUNDAMENTALS — accordion */
+.fundamentals{background:var(--pink);padding:100px 48px}
+.fund-title{max-width:1400px;margin:0 auto 56px;font-family:'Syne',sans-serif;font-size:clamp(30px,4.2vw,60px);font-weight:800;letter-spacing:-.02em;text-transform:uppercase;line-height:1.1}
 .fund-title em{font-style:italic}
-.fund-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px 80px}
-.fund-card-heading{font-family:'Syne',sans-serif;font-size:clamp(16px,1.8vw,24px);font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
-.fund-card-line{height:1px;background:rgba(0,0,0,.25);margin-bottom:18px}
-.fund-card-text{font-family:'Syne Mono',monospace;font-size:clamp(13px,1.1vw,16px);line-height:1.9;color:rgba(0,0,0,.7);hyphens:none;word-break:normal}
-@media(max-width:768px){.fundamentals{padding:56px 24px}.fund-grid{grid-template-columns:1fr;gap:40px}.fund-title{margin-bottom:40px}}
+.fund-list{max-width:1400px;margin:0 auto;border-top:2px solid var(--black)}
+.fund-item{border-bottom:2px solid var(--black)}
+.fund-head{width:100%;display:flex;align-items:center;gap:32px;background:none;border:none;cursor:pointer;padding:28px 4px;text-align:left;font:inherit;color:inherit}
+.fund-num{position:relative;display:inline-flex;align-items:center;flex-shrink:0;width:60px;height:40px;color:var(--black)}
+.fund-num-digit{font-family:'Syne',sans-serif;font-weight:500;font-size:clamp(22px,2.4vw,32px);letter-spacing:-.02em;transition:opacity .25s ease}
+.fund-num-icon{position:absolute;left:0;top:0;display:flex;align-items:center;height:100%;opacity:0;transition:opacity .25s ease}
+.fund-num-icon svg{width:28px;height:28px;stroke:currentColor}
+.fund-item.active .fund-num-digit{opacity:0}
+.fund-item.active .fund-num-icon{opacity:1}
+.fund-card-heading{flex:1;font-family:'Syne',sans-serif;font-size:clamp(26px,3.4vw,48px);font-weight:800;letter-spacing:-.01em;text-transform:uppercase}
+.fund-toggle{font-family:'Syne',sans-serif;font-size:34px;font-weight:400;flex-shrink:0;line-height:1;transition:transform .4s cubic-bezier(.22,1,.36,1),color .35s ease}
+.fund-item.active .fund-toggle{transform:rotate(135deg)}
+.fund-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s cubic-bezier(.22,1,.36,1)}
+.fund-item.active .fund-panel{grid-template-rows:1fr}
+.fund-panel-inner{overflow:hidden}
+.fund-card-text{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.3vw,18px);line-height:1.7;color:rgba(0,0,0,.78);hyphens:none;word-break:normal;max-width:760px;padding:0 4px 32px 92px}
+@media(max-width:768px){
+  .fundamentals{padding:56px 24px}
+  .fund-title{margin-bottom:40px}
+  .fund-head{gap:16px;padding:22px 0}
+  .fund-num{width:36px;height:30px}
+  .fund-num-digit{font-size:20px}
+  .fund-num-icon svg{width:22px;height:22px}
+  .fund-toggle{font-size:26px}
+  .fund-card-text{padding-left:52px;padding-bottom:24px}
+}
 
 /* my work section */
 .work-cta{position:relative;min-height:38vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fff url('assets/fondmywork.jpg') center/cover no-repeat}
@@ -91,11 +133,18 @@ body{background:
 .wc-link:hover .wc-l::after{transform:scaleX(1)}
 @media(max-width:768px){.work-cta{min-height:auto;padding:56px 24px}.wc-stk{display:none}}
 @media(max-width:768px){
-  .about-layout{grid-template-columns:1fr;gap:32px;padding:72px 20px 48px}
-  .liso-q{font-size:clamp(64px,16vw,96px)}
+  .about-hero{padding:88px 20px 48px}
+  .ah-title{font-size:clamp(64px,18vw,96px)}
+  .ah-reveal{display:none}
+  .ah-social{gap:12px}
+  .ah-soc{width:44px;height:44px}
+  .ah-stats{gap:28px;margin-top:40px;padding-top:20px}
+  .bio-sec{padding:56px 20px 64px}
+  .bio-lead{font-size:clamp(22px,6.5vw,30px);margin-bottom:40px}
+  .bio-grid{grid-template-columns:1fr;gap:0}
+  .bio-grid p{font-size:15px}
   .work-cta{padding:56px 24px}
   .work-cta a{font-size:clamp(28px,9vw,44px)}
-  .sticker-block{transform:scale(.82);transform-origin:left top}
 }
 
 
@@ -145,66 +194,125 @@ body{background:
     <button class="burger" id="mobOpen"><span></span><span></span></button>
   </div>
 </header>
-<section class="about-layout">
-  <div class="about-left">
-    <h1 class="liso-q">liso?</h1>
-    <span class="liso-line"></span>
-    <div class="liso-meta">
-      27 years old<br>
-      Midweight Designer at Dept®<br>
-      🖥️ my favorite design discipline :<br>
-      motion design
+<section class="about-hero">
+  <div class="ah-inner">
+    <div class="ah-top">
+      <div class="ah-title-wrap" id="titleWrap">
+        <h1 class="ah-title ah-title-base">liso?</h1>
+        <h1 class="ah-title ah-title-spot" id="titleSpot" aria-hidden="true">liso?</h1>
+        <div class="ah-reveal" id="stickerBlock">
+          <img src="assets/stickers%20about%20liso.png" alt="stickers liso" id="stickerImg">
+        </div>
+      </div>
+      <div class="ah-social">
+        <a href="https://www.behance.net/lfnds" target="_blank" class="ah-soc" id="sfBe">
+          <img src="assets/Behance%20about.png" alt="Behance">
+        </a>
+        <a href="https://www.linkedin.com/in/lisaleirosfernandes/" target="_blank" class="ah-soc" id="sfIn">
+          <img src="assets/linkedin%20about.png" alt="LinkedIn">
+        </a>
+        <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="ah-soc" id="sfPi">
+          <img src="assets/pinterest%20about.png" alt="Pinterest">
+        </a>
+      </div>
     </div>
-    <div class="sticker-block" id="stickerBlock">
-      <img src="assets/stickers%20about%20liso.png" alt="stickers liso" id="stickerImg">
-      <a href="https://www.behance.net/lfnds" target="_blank" class="soc-float" id="sfBe" style="top:28px;left:262px">
-        <img src="assets/Behance%20about.png" alt="Behance">
-      </a>
-      <a href="https://www.linkedin.com/in/lisaleirosfernandes/" target="_blank" class="soc-float" id="sfIn" style="top:110px;left:278px">
-        <img src="assets/linkedin%20about.png" alt="LinkedIn">
-      </a>
-      <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc-float" id="sfPi" style="top:198px;left:258px">
-        <img src="assets/pinterest%20about.png" alt="Pinterest">
-      </a>
+    <div class="ah-stats">
+      <div class="ah-stat"><span class="ah-num" id="ahCount" data-count="27">0</span><span class="ah-label">years old</span></div>
+      <div class="ah-stat"><span class="ah-num">Midweight designer</span><span class="ah-label">at DEPT®, since 2024</span></div>
+      <div class="ah-stat"><span class="ah-num">motion</span><span class="ah-label">favorite discipline</span></div>
     </div>
   </div>
-  <div class="about-right">
-    <div class="bio-text">
-      <p>Also called Lisa. I am a <strong>designer</strong>, and passionate about every creative I start, professional &amp; personal.</p>
-      <p>After completing a Degree in Graphic Design for Print Media with a focus on Visual Communication and advertising, followed by a Bachelor's degree in 360 Digital Project Management (Digital Marketing and Web Design), I went on to earn a Master's degree in Art Direction, specializing in UX/UI Design. After finishing my studies, I continued freelancing under Liso, and am currently a <strong>Midweight designer at DEPT</strong>.</p>
-      <p>I'm a <strong>team player</strong>. I used to work and learn by myself during my school years. Didn't know I've been craving for a team until I got one! Now I know what it takes to work alongside people that each brings something to the table. And mostly, how valuable it is to learn and create amongst a variety of human beings!</p>
-      <p>This career path has allowed me to develop a <strong>versatile profile</strong>, comfortable with both digital and print, on a wide variety of assets &amp; content. Managing and leading jobs from A to Z while assuring quality and rapidity is no secret to me now.</p>
-      <p>What i do best :<br>
-      → <strong>360° graphic design, illustration, motion design, video editing, social media visual identity</strong> : ready to use!</p>
-      <p>I also have a solid grasp of the basics of <strong>marketing and digital communication</strong>, it enables me to develop robust, creative, and coherent projects, to create traction and boost your KPIs.</p>
-      <p>My small and humble background in UX/UI has opened my eyes to the importance of <strong>empathy in design</strong>: my sensitivity has become a real asset in the creative process.</p>
-      <p>Today, I always design with the <strong>user in mind</strong> — avoiding any malicious or non-inclusive approaches. ₊˚౨ৎ˚</p>
+</section>
+
+<section class="bio-sec">
+  <div class="bio-inner">
+    <p class="bio-lead reveal">Or Lisa works just as well. I am a <strong>midweight designer 360°</strong>, <strong>aspiring creative director</strong>, passionate about every creative I start, professional &amp; personal.</p>
+    <div class="bio-grid">
+      <div class="bio-col">
+        <p class="reveal">After completing a Degree in Graphic Design for Print Media with a focus on Visual Communication and advertising, followed by a Bachelor's degree in 360 Digital Project Management (Digital Marketing and Web Design), I went on to earn a Master's degree in Art Direction, specializing in UX/UI Design. After finishing my studies, I continued freelancing under Liso, and am currently a <strong>Midweight designer at DEPT</strong>.</p>
+        <p class="reveal">I'm a <strong>team player</strong>. I used to work and learn by myself during my school years. Didn't know I've been craving for a team until I got one! Now I know what it takes to work alongside people that each brings something to the table. And mostly, how valuable it is to learn and create amongst a variety of human beings!</p>
+        <p class="reveal">This career path has allowed me to develop a <strong>versatile profile</strong>, comfortable with both digital and print, on a wide variety of assets &amp; content. Managing and leading jobs from A to Z while assuring quality and rapidity is no secret to me now.</p>
+      </div>
+      <div class="bio-col">
+        <p class="reveal">I also have a solid grasp of the basics of <strong>marketing and digital communication</strong>, it enables me to develop robust, creative, and coherent projects, to create traction and boost your KPIs.</p>
+        <p class="reveal">My small and humble background in UX/UI has opened my eyes to the importance of <strong>empathy in design</strong>: my sensitivity has become a real asset in the creative process.</p>
+        <p class="reveal">Today, I always design with the <strong>user in mind</strong>, avoiding any malicious or non-inclusive approaches. ₊˚౨ৎ˚</p>
+      </div>
+    </div>
+    <div class="bio-tags reveal">
+      <span class="bio-tag">graphic design</span>
+      <span class="bio-tag">art direction</span>
+      <span class="bio-tag">motion design</span>
+      <span class="bio-tag">illustration</span>
+      <span class="bio-tag">video editing</span>
+      <span class="bio-tag">ux/ui design</span>
+      <span class="bio-tag">social media identity</span>
     </div>
   </div>
 </section>
 
 <section class="fundamentals">
-  <h2 class="fund-title">When I create, these are my<br><em>Fundamentals</em></h2>
-  <div class="fund-grid">
-    <div class="fund-card">
-      <h3 class="fund-card-heading">System</h3>
-      <div class="fund-card-line"></div>
-      <p class="fund-card-text">No chaos in my files, except for the exploring-phase, and no randomness in my choices. Every step is carefully thought out, every element has its place. Since collaborating means sharing, I make sure every file I work with is in the state I'd like to open when jumping on a job. Rigorous? Indeed! But it is only to let creativity shine through.</p>
+  <h2 class="fund-title">When I create, these are<br>my&nbsp;<em>Fundamentals</em></h2>
+  <div class="fund-list" id="fundList">
+    <div class="fund-item active">
+      <button class="fund-head" type="button">
+        <span class="fund-num">
+          <span class="fund-num-digit">01</span>
+          <span class="fund-num-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
+        </span>
+        <h3 class="fund-card-heading">System</h3>
+        <span class="fund-toggle">+</span>
+      </button>
+      <div class="fund-panel">
+        <div class="fund-panel-inner">
+          <p class="fund-card-text">No chaos in my files, except for the exploring-phase, and no randomness in my choices. Every step is carefully thought out, every element has its place. Since collaborating means sharing, I make sure every file I work with is in the state I'd like to open when jumping on a job. Rigorous? Indeed! But it is only to let creativity shine through.</p>
+        </div>
+      </div>
     </div>
-    <div class="fund-card">
-      <h3 class="fund-card-heading">Reflection</h3>
-      <div class="fund-card-line"></div>
-      <p class="fund-card-text">Every project starts with an idea... but never at random. I like to understand what I'm doing, why I'm doing it, and for whom. Observing, listening, questioning: that's the starting point for everything I create. Thinking before acting is one my rules, even more in design. Making graphic design without thinking is like building foundations without planning it beforehand. Better be careful!</p>
+    <div class="fund-item">
+      <button class="fund-head" type="button">
+        <span class="fund-num">
+          <span class="fund-num-digit">02</span>
+          <span class="fund-num-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
+        </span>
+        <h3 class="fund-card-heading">Reflection</h3>
+        <span class="fund-toggle">+</span>
+      </button>
+      <div class="fund-panel">
+        <div class="fund-panel-inner">
+          <p class="fund-card-text">Every project starts with an idea... but never at random. I like to understand what I'm doing, why I'm doing it, and for whom. Observing, listening, questioning: that's the starting point for everything I create. Thinking before acting is one my rules, even more in design. Making graphic design without thinking is like building foundations without planning it beforehand. Better be careful!</p>
+        </div>
+      </div>
     </div>
-    <div class="fund-card">
-      <h3 class="fund-card-heading">Empathy</h3>
-      <div class="fund-card-line"></div>
-      <p class="fund-card-text">I design for humans. Ones with needs, emotions, realities. My goal is to create something useful, fair, and inclusive. When creating for a wide audience on an account, I try to pay extra attention to legibility, accessibility, photo or audio-sensitivity. Even though my first creative instinct is to make loud and vibrant creatives, I know how to tone it down and adapt to different target audiences.</p>
+    <div class="fund-item">
+      <button class="fund-head" type="button">
+        <span class="fund-num">
+          <span class="fund-num-digit">03</span>
+          <span class="fund-num-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></span>
+        </span>
+        <h3 class="fund-card-heading">Empathy</h3>
+        <span class="fund-toggle">+</span>
+      </button>
+      <div class="fund-panel">
+        <div class="fund-panel-inner">
+          <p class="fund-card-text">I design for humans. Ones with needs, emotions, realities. My goal is to create something useful, fair, and inclusive. When creating for a wide audience on an account, I try to pay extra attention to legibility, accessibility, photo or audio-sensitivity. Even though my first creative instinct is to make loud and vibrant creatives, I know how to tone it down and adapt to different target audiences.</p>
+        </div>
+      </div>
     </div>
-    <div class="fund-card">
-      <h3 class="fund-card-heading">Aesthetic</h3>
-      <div class="fund-card-line"></div>
-      <p class="fund-card-text">Beauty is not a bonus. It is what gives strength to the idea, makes the user tick and click. Looks are important! I monitor every detail, making pixel-perfect creatives so that form and content complement each other and sticks in user's minds. It's not about my personal taste, it's about what will speak to the wide variety of users. Since "Tastes and preferences are not up for debate", we have a lot of work to convince a lot of people!</p>
+    <div class="fund-item">
+      <button class="fund-head" type="button">
+        <span class="fund-num">
+          <span class="fund-num-digit">04</span>
+          <span class="fund-num-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>
+        </span>
+        <h3 class="fund-card-heading">Aesthetic</h3>
+        <span class="fund-toggle">+</span>
+      </button>
+      <div class="fund-panel">
+        <div class="fund-panel-inner">
+          <p class="fund-card-text">Beauty is not a bonus. It is what gives strength to the idea, makes the user tick and click. Looks are important! I monitor every detail, making pixel-perfect creatives so that form and content complement each other and sticks in user's minds. It's not about my personal taste, it's about what will speak to the wide variety of users. Since "Tastes and preferences are not up for debate", we have a lot of work to convince a lot of people!</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -347,6 +455,137 @@ if(mob){
   vid.load();
   sec.addEventListener('mouseenter',function(){vid.play().catch(function(){});vid.style.opacity='1';});
   sec.addEventListener('mouseleave',function(){vid.style.opacity='0';});
+})();
+
+// Title — cursor spotlight (lime bleeds through on hover)
+(function(){
+  var wrap=document.getElementById('titleWrap');
+  var spot=document.getElementById('titleSpot');
+  if(!wrap||!spot)return;
+  var raf=null,px=0,py=0;
+  wrap.addEventListener('mousemove',function(e){
+    var r=wrap.getBoundingClientRect();
+    px=e.clientX-r.left;py=e.clientY-r.top;
+    if(!raf)raf=requestAnimationFrame(function(){
+      raf=null;
+      spot.style.setProperty('--mx',px+'px');
+      spot.style.setProperty('--my',py+'px');
+    });
+  });
+  wrap.addEventListener('mouseleave',function(){
+    spot.style.setProperty('--my','-9999px');
+  });
+})();
+
+// Stat — count up when scrolled into view
+(function(){
+  var el=document.getElementById('ahCount');
+  if(!el)return;
+  var target=parseInt(el.getAttribute('data-count'),10)||0;
+  var started=false;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting&&!started){
+        started=true;
+        var start=performance.now(),dur=1100;
+        function tick(now){
+          var p=Math.min((now-start)/dur,1);
+          var eased=1-Math.pow(1-p,3);
+          el.textContent=Math.round(eased*target);
+          if(p<1)requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+    });
+  },{threshold:.6});
+  obs.observe(el);
+})();
+
+// Reveal on scroll
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!els.length)return;
+  var obs=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        en.target.classList.add('in-view');
+        obs.unobserve(en.target);
+      }
+    });
+  },{threshold:.15});
+  els.forEach(function(el,i){
+    el.style.transitionDelay=(i%3)*0.08+'s';
+    obs.observe(el);
+  });
+})();
+
+// Bio tags — magnetic field: pills scatter away from the cursor and spring back
+(function(){
+  var wrap=document.querySelector('.bio-tags');
+  if(!wrap)return;
+  var tags=Array.prototype.slice.call(wrap.querySelectorAll('.bio-tag'));
+  var RADIUS=140,PUSH=48,EASE=0.16;
+
+  var state=tags.map(function(){
+    return {tx:0,ty:0,trot:0,cx:0,cy:0,crot:0,raf:null};
+  });
+
+  function tick(i){
+    var s=state[i];
+    s.cx+=(s.tx-s.cx)*EASE;
+    s.cy+=(s.ty-s.cy)*EASE;
+    s.crot+=(s.trot-s.crot)*EASE;
+    tags[i].style.transform='translate('+s.cx.toFixed(2)+'px,'+s.cy.toFixed(2)+'px) rotate('+s.crot.toFixed(2)+'deg)';
+    var settled=Math.abs(s.tx-s.cx)<0.05&&Math.abs(s.ty-s.cy)<0.05&&Math.abs(s.trot-s.crot)<0.05;
+    if(!settled){
+      s.raf=requestAnimationFrame(function(){tick(i)});
+    }else{
+      s.raf=null;
+    }
+  }
+
+  function wake(i){
+    if(!state[i].raf)state[i].raf=requestAnimationFrame(function(){tick(i)});
+  }
+
+  wrap.addEventListener('mousemove',function(e){
+    tags.forEach(function(t,i){
+      var r=t.getBoundingClientRect();
+      var cx=r.left+r.width/2,cy=r.top+r.height/2;
+      var dx=cx-e.clientX,dy=cy-e.clientY;
+      var dist=Math.sqrt(dx*dx+dy*dy)||0.001;
+      var s=state[i];
+      if(dist<RADIUS){
+        var force=1-dist/RADIUS;
+        s.tx=(dx/dist)*PUSH*force;
+        s.ty=(dy/dist)*PUSH*force;
+        s.trot=(dx/dist)*force*16;
+      }else{
+        s.tx=0;s.ty=0;s.trot=0;
+      }
+      wake(i);
+    });
+  });
+
+  wrap.addEventListener('mouseleave',function(){
+    state.forEach(function(s,i){
+      s.tx=0;s.ty=0;s.trot=0;
+      wake(i);
+    });
+  });
+})();
+
+// Fundamentals — accordion
+(function(){
+  var items=document.querySelectorAll('#fundList .fund-item');
+  items.forEach(function(it){
+    var head=it.querySelector('.fund-head');
+    head.addEventListener('click',function(){
+      var isActive=it.classList.contains('active');
+      items.forEach(function(o){o.classList.remove('active')});
+      if(!isActive)it.classList.add('active');
+    });
+  });
 })();
 
 </script>
