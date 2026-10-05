@@ -14,7 +14,7 @@ body{color:var(--black);font-family:'Syne',sans-serif;overflow-x:hidden}
 
 /* NAV */
 .nav{display:flex;align-items:center;justify-content:flex-start;gap:40px;padding:0 40px;height:120px}
-.nav-logo{height:32px;display:block;text-decoration:none;flex-shrink:0}
+.nav-logo{display:flex;align-items:center;text-decoration:none;flex-shrink:0}
 .nav-logo svg{height:32px;width:auto}
 .nav-links{display:flex;gap:8px}
 .nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:inherit;text-decoration:none;padding:8px 24px;border-radius:100px}
@@ -39,8 +39,8 @@ footer{background:var(--black);padding:28px 48px 40px}
 .ft-line{overflow:hidden;white-space:nowrap}
 @keyframes ftScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 .ft-copy{font-family:'Syne Mono',monospace;font-size:10px;color:var(--lime);text-align:center;margin-top:20px;letter-spacing:.05em;opacity:.7}
-.ft-logo{display:flex;justify-content:center;margin:20px 0 16px}
-.ft-logo img{height:44px;width:auto}
+.ft-logo{display:flex;justify-content:center;margin:50px 0 16px}
+.ft-logo img{height:64px;width:auto}
 .ft-soc{display:flex;justify-content:center;gap:12px}
 .soc{width:40px;height:40px;display:flex;align-items:center;justify-content:center;text-decoration:none}
 .soc img{width:40px;height:40px;object-fit:contain;display:block}
@@ -64,11 +64,8 @@ body{background:var(--bg)}
 
 /* VIDEO HERO */
 .hero{position:relative;width:100%;min-height:100vh;background:#000;overflow:visible}
-.hero video{width:100%;height:100vh;object-fit:cover;display:block;position:relative;z-index:1}
-.hero-disc{position:absolute;top:120px;left:0;right:0;overflow:hidden;pointer-events:none;z-index:2}
-.disc-line{white-space:nowrap;overflow:hidden;line-height:1.85}
-.disc-run{display:inline-block;animation:discScroll 75s linear infinite;font-family:'Syne Mono',monospace;font-size:clamp(11px,1.65vw,24px);letter-spacing:.06em;text-transform:uppercase;color:#fff;font-weight:400}
-@keyframes discScroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.hero-vid-wrap{position:absolute;inset:0;overflow:hidden;z-index:1}
+.hero video{position:absolute;left:50%;top:calc(-7.5% - 200px);width:115%;height:calc(115% + 200px);transform:translateX(-50%);object-fit:cover;display:block}
 .arc-bridge{position:absolute;bottom:-35px;left:0;right:0;z-index:5;pointer-events:none;overflow:visible}
 /* WORK SECTION */
 .work{position:relative;min-height:95vh;display:flex;align-items:center;justify-content:center;overflow:visible;background:#fff url('assets/fondmywork.jpg') center/cover no-repeat}
@@ -84,9 +81,8 @@ body{background:var(--bg)}
 .about-btn{font-family:'Syne Mono',monospace;font-size:16px;color:#fff;background:var(--black);padding:18px 64px;border-radius:100px;text-decoration:none;transition:background .25s,color .25s,border .25s;border:2px solid var(--black)}
 .about-btn:hover{background:#fff;color:var(--black)}
 @media(max-width:768px){
-  .stk{display:none}.arc{display:none}.hero-disc{display:none}.arc-bridge{display:none}
+  .stk{display:none}.arc{display:none}.arc-bridge{display:none}
   .hero{min-height:100svh}
-  .hero video{height:100svh}
   .work{min-height:auto;padding:56px 24px}
   .wl{font-size:clamp(34px,9vw,52px)}
   .about-sec{padding:64px 24px}
@@ -135,9 +131,9 @@ body{background:var(--bg)}
 <header style="position:absolute;top:0;left:0;right:0;z-index:300;background:transparent;">
   <div class="nav">
     <a href="index.html" class="nav-logo" >
-      <img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:60px;width:auto;display:block">
+      <img src="assets/logo%20liso%20noir.png" alt="Liso Studio" style="height:68px;width:auto;display:block">
     </a>
-    <div class="nav-links" style="color:#fff">
+    <div class="nav-links" style="color:#111">
       <a href="index.html">home ⌂*✿:·</a>
       <a href="work.html">my work °*✶.</a>
       <a href="about.html">about ₊˚౨ৎ˚</a>
@@ -145,18 +141,16 @@ body{background:var(--bg)}
     <button class="burger" id="mobOpen"><span></span><span></span></button>
   </div>
 </header>
-  <div class="hero-disc">
-    <div class="disc-line"><span class="disc-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
-    <div class="disc-line"><span class="disc-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
+  <div class="hero-vid-wrap">
+    <video id="heroVid" autoplay muted playsinline loop preload="auto">
+      <source src="assets/videos/video%20hero%20HP.mp4?v=7" type="video/mp4">
+    </video>
   </div>
-  <video id="heroVid" autoplay muted playsinline loop preload="auto">
-    <source src="assets/videos/video%20hero%20HP.mp4?v=7" type="video/mp4">
-  </video>
 
 <div class="arc-bridge">
   <svg viewBox="0 0 1440 185" preserveAspectRatio="none" style="display:block;width:100%;overflow:visible">
     <defs><path id="ap" d="M -80,90 Q 200,0 480,90 Q 760,180 1040,90 Q 1320,0 1600,90"/></defs>
-    <text font-family="'Syne Mono',monospace" font-size="76" letter-spacing="8" fill="#fff" id="arcText">
+    <text font-family="'Syne Mono',monospace" font-size="76" letter-spacing="8" fill="#111" id="arcText">
       <textPath id="arcTp" href="#ap" startOffset="0%">*lisostudio *lisostudio *lisostudio *lisostudio *lisostudio *lisostudio *lisostudio *lisostudio</textPath>
     </text>
   </svg>
@@ -196,7 +190,7 @@ body{background:var(--bg)}
     <div class="ft-line"><span class="ft-run">GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      GRAPHIC DESIGN  *  CREATIVE DIRECTION  *  ILLUSTRATION  *  MOTION DESIGN  *  VIDEO EDITING  *      </span></div>
     <div class="ft-line"><span class="ft-run">DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      DESIGN GRAPHIQUE  *  DIRECTION CRÉATIVE  *  ILLUSTRATION  *  ANIMATION  *  MONTAGE VIDÉO  *      </span></div>
   </div>
-  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:44px;width:auto"></div>
+  <div class="ft-logo"><img src="assets/logo%20liso%20blanc.png" alt="Liso Studio" style="height:64px;width:auto"></div>
   <div class="ft-soc" id="ftSoc">
     <a href="https://www.behance.net/lfnds" target="_blank" class="soc"><img src="assets/icons/Behance/lime.png" alt="Behance" draggable="false"></a>
     <a href="https://fr.pinterest.com/lisooooooooo/_profile/" target="_blank" class="soc"><img src="assets/icons/Pinterest/lime.png" alt="Pinterest" draggable="false"></a>
@@ -297,86 +291,12 @@ new IntersectionObserver(e=>{e[0].isIntersecting?vid.play().catch(()=>{}):vid.pa
 })();
 
 
-// *lisostudio* arc — video color sampling
-(function(){
-  var video = document.getElementById('heroVid');
-  var arcText = document.getElementById('arcText');
-  if(!video || !arcText) return;
-
-  var canvas = document.createElement('canvas');
-  var ctx = canvas.getContext('2d', {willReadFrequently: true});
-  canvas.width = 80;
-  canvas.height = 60;
-
-  var currentColor = [255,255,255];
-  var targetColor  = [255,255,255];
-
-  // Elements to colorise
-  var discRuns  = document.querySelectorAll('.disc-run');
-  var navLinks  = document.querySelectorAll('.nav-links a');
-
-  function lerp(a, b, t){ return Math.round(a + (b - a) * t); }
-
-
-  function sampleColor(){
-    if(video.readyState < 2 || !video.videoWidth) return;
-    try {
-      ctx.drawImage(video, 0, 0, 80, 60);
-      // Sample full frame center for nav/disc, lower area for arc
-      var d = ctx.getImageData(10, 5, 60, 50).data;
-      var r=0,g=0,b=0,n=0;
-      for(var i=0;i<d.length;i+=8){ r+=d[i];g+=d[i+1];b+=d[i+2];n++; }
-      if(!n) return;
-      r=r/n; g=g/n; b=b/n;
-
-      // Boost saturation
-      var mid=(Math.max(r,g,b)+Math.min(r,g,b))/2;
-      var sat=1.7;
-      r=Math.min(255,Math.max(0,mid+(r-mid)*sat));
-      g=Math.min(255,Math.max(0,mid+(g-mid)*sat));
-      b=Math.min(255,Math.max(0,mid+(b-mid)*sat));
-
-      // Ensure readable brightness
-      var lum=0.299*r+0.587*g+0.114*b;
-      if(lum<100){ var boost=100/Math.max(1,lum); r=Math.min(255,r*boost);g=Math.min(255,g*boost);b=Math.min(255,b*boost); }
-
-      targetColor=[Math.round(r),Math.round(g),Math.round(b)];
-    } catch(e){}
-  }
-
-  function animateColor(){
-    currentColor=[
-      lerp(currentColor[0],targetColor[0],0.10),
-      lerp(currentColor[1],targetColor[1],0.10),
-      lerp(currentColor[2],targetColor[2],0.10)
-    ];
-    var rgb='rgb('+currentColor[0]+','+currentColor[1]+','+currentColor[2]+')';
-
-    // Arc *lisostudio*
-    arcText.setAttribute('fill', rgb);
-
-    // Disc bar 2 lines
-    discRuns.forEach(function(el){ el.style.color = rgb; });
-
-    // Nav links
-    navLinks.forEach(function(el){ el.style.color = rgb; });
-
-
-    requestAnimationFrame(animateColor);
-  }
-
-  setInterval(sampleColor, 200);
-  video.addEventListener('loadeddata', sampleColor);
-  animateColor();
-})();
-
-
 // Side nav section-aware color
 (function(){
   var fn = document.querySelector('.float-nav');
   if(!fn) return;
   var sections = [
-    { el: document.getElementById('heroSec'),   color:'#fff' },
+    { el: document.getElementById('heroSec'),   color:'#111' },
     { el: document.getElementById('workSec'),   color:'#111' },
     { el: document.querySelector('.about-sec'), color:'#111' },
     { el: document.querySelector('footer'),     color:'#C8F55A' },
