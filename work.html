@@ -59,8 +59,8 @@ body{background:#e8e4de;color:var(--black)}
 .nav-links a:hover{color:#fff;opacity:1}
 /* project names */
 .proj-sec{padding:64px 48px 0;position:relative}
-.proj-names{font-family:'Syne',sans-serif;font-size:clamp(34px,5.5vw,70px);font-weight:800;letter-spacing:-.03em;line-height:1.25;text-align:center}
-.pw{display:inline;cursor:pointer;transition:font-style .15s;position:relative;white-space:nowrap}
+.proj-names{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:6px 36px;max-width:1280px;margin:0 auto}
+.pw{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.2;font-size:clamp(30px,5.2vw,58px);cursor:pointer;transition:font-style .15s;position:relative}
 .pw.hover-active{font-style:italic}
 .hover-sticker{position:fixed;pointer-events:none;z-index:500;opacity:0;transform:rotate(-4deg) scale(.85);transition:opacity .2s,transform .2s;top:0;left:0}
 .hover-sticker.show{opacity:1;transform:rotate(-3deg) scale(1)}
@@ -70,15 +70,16 @@ body{background:#e8e4de;color:var(--black)}
 /* about — compact variant for secondary pages */
 .about-sec{padding:52px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:20px;position:relative;overflow:visible;background:transparent}
 .about-t{font-family:'Syne Mono',monospace;font-size:clamp(22px,3vw,44px);font-weight:400;letter-spacing:-.02em}
-.about-btn{font-family:'Syne Mono',monospace;font-size:12px;color:#fff;background:var(--black);padding:11px 36px;border-radius:100px;text-decoration:none;transition:background .25s,color .25s;border:2px solid var(--black)}
-.about-btn:hover{background:#fff;color:var(--black)}
-.photo-card{position:absolute;top:50%;width:340px;pointer-events:none;opacity:0;transform:translateY(calc(-50% + 60px));transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.about-btn{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.5vw,18px);color:#111;background:transparent;border:2px solid #111;border-radius:100px;padding:14px 56px;text-decoration:none;display:inline-block;transition:background .25s,color .25s;letter-spacing:.02em}
+.about-btn:hover{background:#111;color:#C8F55A}
+.photo-card{position:absolute;top:50%;width:375px;pointer-events:none;opacity:0;transform:translateY(calc(-50% + 60px));transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
 .photo-card img{width:100%;height:auto;display:block}
 .about-sec:has(.about-btn:hover) .photo-card{opacity:1;transform:translateY(-50%)}
 .about-sec:has(.about-btn:hover) .pc-d1{transition-delay:.07s}
 .about-sec:has(.about-btn:hover) .pc-d2{transition-delay:.14s}
 @media(max-width:768px){.photo-card{display:none}}
-@media(max-width:768px){.proj-sec{padding:48px 20px 0}.proj-names{font-size:clamp(28px,7vw,44px)}.about-sec{padding:64px 24px}}
+@media(max-width:768px){.proj-sec{padding:48px 20px 0}.proj-names{gap:2px 14px}.about-sec{padding:64px 24px}}
+@media(max-width:1024px){.pw[data-href="liso.html"]{display:none}}
 
 
 /* FLOATING NAV */
@@ -133,20 +134,20 @@ body{background:#e8e4de;color:var(--black)}
 <div class="hover-sticker" id="hoverSt"></div>
 <section class="proj-sec" id="projSec">
   <div class="proj-names">
-    <span class="pw" data-href="jobexpresso.html" data-sticker="assets/jobxgif.gif">jobexpresso*</span>
-    <span class="pw" data-href="headz.html" data-sticker="assets/headz!%20gif.gif"> headz!*</span>
-    <span class="pw" data-href="claws.html" data-sticker="assets/gif%20claws%20logo.gif"> claws*</span><br>
     <span class="pw" data-href="99.html" data-sticker="assets/99gif.gif">99*</span>
-    <span class="pw" data-href="topo.html" data-sticker="assets/topogif.gif"> topo*</span>
-    <span class="pw" data-href="withliso.html" data-sticker="assets/w-lisogif.gif"> withliso*</span><br>
+    <span class="pw" data-href="liso.html" data-sticker="assets/lisogif.gif">liso*</span>
+    <span class="pw" data-href="topo.html" data-sticker="assets/topogif.gif">topo*</span>
     <span class="pw" data-href="benji.html" data-sticker="assets/benji%20gif.gif">benji*</span>
-    <span class="pw" data-href="smiirl.html" data-sticker="assets/smiirlgif.gif"> smiirl*</span>
-    <span class="pw" data-href="framacademy.html" data-sticker="assets/framgif.gif" data-size="large"> framacademy*</span><br>
-    <span class="pw" data-href="breakleague.html" data-sticker="assets/breakleaguegif.gif">break league*</span>
-    <span class="pw" data-href="eudemonia.html" data-sticker="assets/eudemoniagif.gif"> eudemonia*</span>
-    <span class="pw" data-href="foodmatcher.html" data-sticker="assets/fmgif.gif" data-size="large"> foodmatcher*</span><br>
+    <span class="pw" data-href="claws.html" data-sticker="assets/gif%20claws%20logo.gif">claws*</span>
+    <span class="pw" data-href="headz.html" data-sticker="assets/headz!%20gif.gif">headz!*</span>
+    <span class="pw" data-href="smiirl.html" data-sticker="assets/smiirlgif.gif">smiirl*</span>
+    <span class="pw" data-href="withliso.html" data-sticker="assets/w-lisogif.gif">withliso*</span>
+    <span class="pw" data-href="eudemonia.html" data-sticker="assets/eudemoniagif.gif">eudemonia*</span>
     <span class="pw" data-href="noplastic.html" data-sticker="assets/noplasticgif.gif" data-size="large">noplastic*</span>
-    <span class="pw" data-href="liso.html" data-sticker="assets/lisogif.gif"> liso*</span><br>
+    <span class="pw" data-href="framacademy.html" data-sticker="assets/framgif.gif" data-size="large">framacademy*</span>
+    <span class="pw" data-href="foodmatcher.html" data-sticker="assets/fmgif.gif" data-size="large">foodmatcher*</span>
+    <span class="pw" data-href="jobexpresso.html" data-sticker="assets/jobxgif.gif">jobexpresso*</span>
+    <span class="pw" data-href="breakleague.html" data-sticker="assets/breakleaguegif.gif">break league*</span>
     <span class="pw" data-href="redlightforhouse.html" data-sticker="assets/gif%20rlfh.gif" data-size="medium">red light for house*</span>
   </div>
 </section>
@@ -165,7 +166,10 @@ body{background:#e8e4de;color:var(--black)}
   <a href="about.html" class="about-btn">who is she?</a>
 </section>
 
-<section style="background:#C8F55A;padding:32px 48px;display:flex;justify-content:center;align-items:center">
+<section id="vlib-cta-work" style="background:#C8F55A;padding:32px 48px;display:flex;justify-content:center;align-items:center;position:relative;overflow:hidden">
+  <video id="vlib-cta-work-vid" muted loop playsinline preload="auto" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s;pointer-events:none">
+    <source src="assets/videos/video%20my%20work%20background.mp4" type="video/mp4">
+  </video>
   <a href="videotheque.html" class="vlib-btn">la vidéothèque</a>
 </section>
 
@@ -242,6 +246,16 @@ document.querySelectorAll('.pw').forEach(w=>{
     requestAnimationFrame(tick);
   }
   tick();
+})();
+
+// Vidéothèque CTA — video reveal on hover
+(function(){
+  var sec=document.getElementById('vlib-cta-work');
+  var vid=document.getElementById('vlib-cta-work-vid');
+  if(!sec||!vid)return;
+  vid.load();
+  sec.addEventListener('mouseenter',function(){vid.play().catch(function(){});vid.style.opacity='1';});
+  sec.addEventListener('mouseleave',function(){vid.style.opacity='0';});
 })();
 
 // Footer icons — smooth lerp follow, stay on leave, reset on footer exit

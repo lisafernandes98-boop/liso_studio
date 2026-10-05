@@ -18,7 +18,7 @@ body{color:var(--black);font-family:'Syne',sans-serif;overflow-x:hidden}
 .nav-logo svg{height:32px;width:auto}
 .nav-links{display:flex;gap:8px}
 .nav-links a{font-family:'Syne Mono',monospace;font-size:20px;color:inherit;text-decoration:none;padding:8px 24px;border-radius:100px}
-.nav-links a:hover{opacity:.6}
+.nav-links a:hover{color:#fff}
 .burger{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px}
 .burger span{display:block;width:22px;height:2px;background:var(--black);border-radius:2px}
 
@@ -57,8 +57,8 @@ body{background:var(--bg)}
 
 /* FLOATING NAV */
 .float-nav{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:500;display:flex;flex-direction:column;gap:20px;align-items:center}
-.float-nav a{font-family:'Syne Mono',monospace;font-size:13px;color:var(--black);text-decoration:none;line-height:1;display:block;opacity:.8;transition:opacity .2s}
-.float-nav a:hover{opacity:1}
+.float-nav a{font-family:'Syne Mono',monospace;font-size:14px;color:var(--black);text-decoration:none;line-height:1;display:block;transition:opacity .2s}
+.float-nav a:hover{opacity:.6}
 @media(max-width:768px){.float-nav{display:none}}
 
 
@@ -78,8 +78,8 @@ body{background:var(--bg)}
 /* ABOUT */
 .about-sec{background:var(--pink);padding:96px 48px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:32px}
 .about-t{font-family:'Syne Mono',monospace;font-size:clamp(36px,6vw,88px);font-weight:400;letter-spacing:-.02em}
-.about-btn{font-family:'Syne Mono',monospace;font-size:16px;color:#fff;background:var(--black);padding:18px 64px;border-radius:100px;text-decoration:none;transition:background .25s,color .25s,border .25s;border:2px solid var(--black)}
-.about-btn:hover{background:#fff;color:var(--black)}
+.about-btn{font-family:'Syne Mono',monospace;font-size:clamp(15px,1.5vw,18px);color:#111;background:transparent;border:2px solid #111;border-radius:100px;padding:14px 56px;text-decoration:none;display:inline-block;transition:background .25s,color .25s;letter-spacing:.02em}
+.about-btn:hover{background:#111;color:#C8F55A}
 @media(max-width:768px){
   .stk{display:none}.arc{display:none}.arc-bridge{display:none}
   .hero{min-height:100svh}
@@ -91,7 +91,7 @@ body{background:var(--bg)}
 
 /* About photo clusters */
 .about-sec{position:relative;overflow:hidden}
-.photo-card{position:absolute;top:50%;width:460px;pointer-events:none;opacity:0;transform:translateY(calc(-50% + 80px));transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
+.photo-card{position:absolute;top:50%;width:500px;pointer-events:none;opacity:0;transform:translateY(calc(-50% + 80px));transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1)}
 .photo-card img{width:100%;height:auto;display:block}
 .about-sec:has(.about-btn:hover) .photo-card{opacity:1;transform:translateY(-50%)}
 .about-sec:has(.about-btn:hover) .pc-d0{transition-delay:0s}
@@ -282,7 +282,7 @@ new IntersectionObserver(e=>{e[0].isIntersecting?vid.play().catch(()=>{}):vid.pa
   if(!tp)return;
   var off=0;
   function tick(){
-    off-=0.014;
+    off-=0.02;
     if(off<-50)off+=50;
     tp.setAttribute('startOffset',off+'%');
     requestAnimationFrame(tick);
