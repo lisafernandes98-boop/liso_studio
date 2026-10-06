@@ -82,7 +82,7 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 .vlib-grid.filtered-smiirl{columns:unset;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px}
 .vlib-grid.filtered-smiirl .vlib-item{width:auto;margin-bottom:0}
 .vlib-grid.filtered-smiirl .vlib-wrap{height:280px;width:auto}
-.vlib-grid.filtered-claws{columns:unset;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:68vh;gap:16px}
+.vlib-grid.filtered-claws{columns:unset;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:68vh;gap:16px;align-items:stretch}
 .vlib-grid.filtered-claws [data-featured]{grid-column:1;grid-row:1/span 2}
 .vlib-grid.filtered-claws .vlib-item{margin-bottom:0;display:block}
 .vlib-grid.filtered-claws .vlib-wrap{height:100%;aspect-ratio:unset}
@@ -100,6 +100,27 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 .vlib-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:48px;z-index:2;pointer-events:none}
 .vlib-play span{font-family:'Syne Mono',monospace;font-size:clamp(36px,4vw,64px);color:#F9BFDC;line-height:1;user-select:none;opacity:0;transition:opacity .2s}
 .vlib-wrap:not(.playing):hover .vlib-play span{opacity:1}
+
+/* Expand-to-lightbox button */
+.vlib-expand{position:absolute;top:12px;right:12px;z-index:6;width:34px;height:34px;border-radius:50%;background:rgba(17,17,17,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.9);transition:opacity .2s ease,transform .2s ease,background .2s ease;cursor:pointer}
+.vlib-wrap:hover .vlib-expand{opacity:1;transform:scale(1)}
+.vlib-expand:hover{background:rgba(249,191,220,.85)}
+.vlib-expand:hover svg{stroke:#111}
+.vlib-expand svg{width:15px;height:15px;stroke:#fff;transition:stroke .2s ease}
+
+/* Lightbox — frosted glass */
+.vlib-lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(8,8,10,.5);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);opacity:0;pointer-events:none;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
+.vlib-lightbox.open{opacity:1;pointer-events:auto}
+.vlib-lightbox-inner{position:relative;display:flex;transform:scale(.96);transition:transform .4s cubic-bezier(.22,1,.36,1)}
+.vlib-lightbox.open .vlib-lightbox-inner{transform:scale(1)}
+.vlib-lightbox video{max-width:88vw;max-height:86vh;border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.55);display:block;background:#000}
+.vlib-lightbox-close{position:absolute;top:-52px;right:0;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.12);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px;line-height:1;transition:background .2s ease}
+.vlib-lightbox-close:hover{background:rgba(255,255,255,.22)}
+@media(max-width:768px){
+  .vlib-expand{top:8px;right:8px;width:30px;height:30px}
+  .vlib-expand svg{width:13px;height:13px}
+  .vlib-lightbox-close{top:auto;bottom:-52px;right:0}
+}
 @media(max-width:768px){
   #cinema{justify-content:center;padding-top:100px}
   .cinema-wrap{width:90vw}
@@ -210,8 +231,8 @@ function getIcon(src){
   const s=src.toLowerCase();
   if(s.includes('claws'))return'assets/gif%20claws%20logo.gif';
   if(s.includes('smiirl')||s.includes('loutsa'))return'assets/smiirlgif.gif';
-  if(s.includes('topo')||s.includes('malakoff'))return'assets/topogif.gif';
-  if(s.includes('break')||s.includes('league'))return'assets/breakleaguegif.gif';
+  if(s.includes('topo')||s.includes('malakoff')||s.includes('montreuil')||s.includes('issy')||s.includes('bagnolet')||s.includes('sarcelles')||s.includes('lutece')||s.includes('coulommiers'))return'assets/topogif.gif';
+  if(s.includes('break')||s.includes('league')||s.includes('/breakleague/'))return'assets/breakleaguegif.gif';
   if(s.includes('job')||s.includes('expresso'))return'assets/jobxgif.gif';
   if(s.includes('withliso'))return'assets/w-lisogif.gif';
   return'assets/lisogif.gif';
@@ -250,8 +271,8 @@ const gridVideos=[
   {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%203.mp4',cat:'smiirl'},
   {src:'assets/videotheque%20add-ons/smiirl%20footage.mp4',cat:'smiirl'},
   {src:'assets/videotheque%20add-ons/smiirlmims.mp4',cat:'smiirl'},
-  {src:'assets/videotheque%20add-ons/Break%20League%20%231.mp4',cat:'breakleague'},
   {src:'assets/videotheque%20add-ons/Breakleague%20Video%2002.mp4',cat:'breakleague'},
+  {src:'assets/videotheque%20add-ons/Break%20League%20%231.mp4',cat:'breakleague'},
   {src:'assets/videos/breakleague/focus_laze-1.mp4',cat:'breakleague'},
   {src:'assets/videos/breakleague/focus_scarlet.mp4',cat:'breakleague'},
   {src:'assets/videos/breakleague/focus_shonen.mp4',cat:'breakleague'},
@@ -266,6 +287,41 @@ const gridVideos=[
 
 const grid=document.getElementById('vlibGrid');
 const rowContainers={};
+
+// ── Lightbox (frosted-glass expanded view)
+const lightbox=document.createElement('div');
+lightbox.className='vlib-lightbox';
+const lightboxInner=document.createElement('div');
+lightboxInner.className='vlib-lightbox-inner';
+const lightboxVid=document.createElement('video');
+lightboxVid.playsInline=true;
+lightboxVid.controls=true;
+lightboxVid.loop=true;
+const lightboxClose=document.createElement('div');
+lightboxClose.className='vlib-lightbox-close';
+lightboxClose.innerHTML='✕';
+lightboxInner.appendChild(lightboxVid);
+lightboxInner.appendChild(lightboxClose);
+lightbox.appendChild(lightboxInner);
+document.body.appendChild(lightbox);
+
+function openLightbox(src){
+  if(activeVid){activeVid.pause();const aw=activeVid.closest('.vlib-wrap');if(aw)aw.classList.remove('playing');activeVid=null;}
+  lightboxVid.src=src;
+  lightboxVid.muted=false;
+  lightbox.classList.add('open');
+  document.body.style.overflow='hidden';
+  lightboxVid.play().catch(function(){});
+}
+function closeLightbox(){
+  lightbox.classList.remove('open');
+  lightboxVid.pause();
+  document.body.style.overflow='';
+}
+lightboxClose.addEventListener('click',closeLightbox);
+lightbox.addEventListener('click',function(e){if(e.target===lightbox)closeLightbox();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
+
 gridVideos.forEach(function(v){
   const item=document.createElement('div');
   item.className='vlib-item';
@@ -296,8 +352,15 @@ gridVideos.forEach(function(v){
   ico.src=getIcon(v.src);
   ico.alt='';
 
+  // Expand-to-lightbox button
+  const expandBtn=document.createElement('div');
+  expandBtn.className='vlib-expand';
+  expandBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H4v5M20 9V4h-5M4 15v5h5M15 20h5v-5"/></svg>';
+  expandBtn.addEventListener('click',function(e){e.stopPropagation();openLightbox(v.src);});
+
   wrap.appendChild(vid);
   wrap.appendChild(overlay);
+  wrap.appendChild(expandBtn);
   item.appendChild(wrap);
   item.appendChild(ico);
   if(v.row){
