@@ -259,22 +259,6 @@ const vidObserver=new IntersectionObserver(function(entries){
   });
 },{threshold:0.1});
 
-// ── Lazy load/unload: only keep videos near the viewport actually decoded,
-// otherwise too many simultaneous <video> elements exhaust the browser's
-// decoder pool and tiles start rendering black with stray audio.
-const lazyLoadObserver=new IntersectionObserver(function(entries){
-  entries.forEach(function(e){
-    const v=e.target;
-    if(e.isIntersecting){
-      if(!v.src&&v.dataset.lazySrc)v.src=v.dataset.lazySrc;
-    } else if(v.src&&v!==activeVid){
-      v.pause();
-      v.removeAttribute('src');
-      v.load();
-    }
-  });
-},{rootMargin:'600px 0px',threshold:0});
-
 // ── BUILD GRID dynamically
 const gridVideos=[
   {src:'assets/videotheque%20add-ons/claws%20clic%20clac%20video%20Lisa.mp4',cat:'claws'},
@@ -364,26 +348,11 @@ lightboxInner.appendChild(lightboxClose);
 lightbox.appendChild(lightboxInner);
 document.body.appendChild(lightbox);
 
-let lightboxSourceVid=null,lightboxSourceWrap=null;
-function openLightbox(src,sourceVid,sourceWrap){
-  if(activeVid&&activeVid!==sourceVid){
-    activeVid.pause();
-    const aw=activeVid.closest('.vlib-wrap');
-    if(aw)aw.classList.remove('playing');
-    activeVid=null;
-  }
-  const resumeTime=sourceVid?sourceVid.currentTime:0;
-  const muted=sourceVid?sourceVid.muted:true;
-  const vol=sourceVid?sourceVid.volume:0.6;
-  if(sourceVid){
-    sourceVid.pause();
-    if(sourceWrap)sourceWrap.classList.remove('playing');
-    if(activeVid===sourceVid)activeVid=null;
-  }
-  lightboxSourceVid=sourceVid;
-  lightboxSourceWrap=sourceWrap;
-
+function openLightbox(src,state){
+  if(activeVid){activeVid.pause();const aw=activeVid.closest('.vlib-wrap');if(aw)aw.classList.remove('playing');activeVid=null;}
   lightboxVid.src=src;
+  const muted=state?state.muted:true;
+  const vol=(state&&state.volume>0)?state.volume:0.6;
   lightboxVid.volume=vol;
   lightboxVid.muted=muted;
   lightboxVolRange.value=muted?0:vol;
@@ -393,35 +362,13 @@ function openLightbox(src,sourceVid,sourceWrap){
   lightbox.classList.add('open');
   lightboxInner.classList.add('playing');
   document.body.style.overflow='hidden';
-  lightboxVid.addEventListener('loadedmetadata',function resume(){
-    lightboxVid.removeEventListener('loadedmetadata',resume);
-    lightboxVid.currentTime=resumeTime;
-    lightboxVid.play().catch(function(){});
-  },{once:true});
+  lightboxVid.play().catch(function(){});
 }
 function closeLightbox(){
   lightbox.classList.remove('open');
   lightboxInner.classList.remove('playing');
-  if(lightboxSourceVid){
-    const vid=lightboxSourceVid,wrap=lightboxSourceWrap;
-    vid.currentTime=lightboxVid.currentTime;
-    vid.muted=lightboxVid.muted;
-    vid.volume=lightboxVid.volume;
-    if(vid._volIcon)vid._volIcon.textContent=lightboxVid.muted?'🔇':'🔊';
-    if(vid._volRange)vid._volRange.value=lightboxVid.muted?0:lightboxVid.volume;
-    if(!lightboxVid.paused){
-      vid.play().catch(function(){});
-      if(wrap)wrap.classList.add('playing');
-      activeVid=vid;
-    } else {
-      if(wrap)wrap.classList.remove('playing');
-      if(activeVid===vid)activeVid=null;
-    }
-  }
   lightboxVid.pause();
   document.body.style.overflow='';
-  lightboxSourceVid=null;
-  lightboxSourceWrap=null;
 }
 lightboxClose.addEventListener('click',function(e){e.stopPropagation();closeLightbox();});
 lightboxPlay.addEventListener('click',function(e){
@@ -447,8 +394,7 @@ gridVideos.forEach(function(v){
   const vid=document.createElement('video');
   vid.className='vlib-vid';
   vid.preload='auto';
-  vid.dataset.lazySrc=v.src;
-  lazyLoadObserver.observe(vid);
+  vid.src=v.src;
   vid.playsInline=true;
   if(v.src.toLowerCase().includes('smiirl%20footage'))vid.style.objectPosition='right center';
   if(v.src.toLowerCase().includes('clic%20clac'))vid.style.objectPosition='center 30%';
@@ -472,7 +418,7 @@ gridVideos.forEach(function(v){
   const expandBtn=document.createElement('div');
   expandBtn.className='vlib-expand';
   expandBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H4v5M20 9V4h-5M4 15v5h5M15 20h5v-5"/></svg>';
-  expandBtn.addEventListener('click',function(e){e.stopPropagation();openLightbox(v.src,vid,wrap);});
+  expandBtn.addEventListener('click',function(e){e.stopPropagation();openLightbox(v.src,{muted:vid.muted,volume:vid.volume});});
 
   wrap.appendChild(vid);
   wrap.appendChild(overlay);
@@ -496,7 +442,6 @@ gridVideos.forEach(function(v){
   const volIcon=document.createElement('span');volIcon.className='vol-icon';volIcon.textContent='🔊';
   const volRange=document.createElement('input');volRange.className='vol-range';volRange.type='range';volRange.min=0;volRange.max=1;volRange.step=0.01;volRange.value=0.08;
   volBar.appendChild(volIcon);volBar.appendChild(volRange);wrap.appendChild(volBar);
-  vid._volIcon=volIcon;vid._volRange=volRange;
   volBar.addEventListener('click',function(e){e.stopPropagation();});
   volBar.addEventListener('mousedown',function(e){e.stopPropagation();});
 
@@ -525,8 +470,7 @@ gridVideos.forEach(function(v){
         const aw=activeVid.closest('.vlib-wrap');
         if(aw)aw.classList.remove('playing');
       }
-      if(!vid.src&&vid.dataset.lazySrc)vid.src=vid.dataset.lazySrc;
-      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;vid.play().catch(function(){});wrap.classList.add('playing');activeVid=vid;
+      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;vid.play();wrap.classList.add('playing');activeVid=vid;
     }else{
       vid.pause();wrap.classList.remove('playing');activeVid=null;
     }
