@@ -111,8 +111,13 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 .vlib-lightbox-inner{position:relative;display:flex;transform:scale(.96);transition:transform .4s cubic-bezier(.22,1,.36,1)}
 .vlib-lightbox.open .vlib-lightbox-inner{transform:scale(1)}
 .vlib-lightbox video{max-width:88vw;max-height:86vh;border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.55);display:block;background:#000}
-.vlib-lightbox-play{border-radius:20px;cursor:pointer}
+.vlib-lightbox-play{border-radius:20px;cursor:pointer;pointer-events:auto}
 .vlib-lightbox-vol{bottom:28px}
+.vlib-seek{-webkit-appearance:none;appearance:none;position:absolute;bottom:0;left:0;right:0;width:100%;height:5px;margin:0;border-radius:0 0 20px 20px;outline:none;cursor:pointer;z-index:4;background:rgba(255,255,255,.25)}
+.vlib-seek::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#F9BFDC;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
+.vlib-seek::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#F9BFDC;border:none;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
+.vlib-seek::-moz-range-progress{background:#F9BFDC}
+.vlib-seek::-moz-range-track{background:rgba(255,255,255,.25)}
 .vlib-lightbox-inner .vol-bar{opacity:0}
 .vlib-lightbox-inner:hover .vol-bar{opacity:1}
 .vlib-lightbox-close{position:absolute;top:-52px;right:0;width:40px;height:40px;border-radius:50%;background:rgba(249,191,220,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#111;font-size:18px;line-height:1;z-index:3}
@@ -313,24 +318,47 @@ lightboxVolRange.type='range';lightboxVolRange.min=0;lightboxVolRange.max=1;ligh
 lightboxVolBar.appendChild(lightboxVolIcon);
 lightboxVolBar.appendChild(lightboxVolRange);
 
+const lightboxSeek=document.createElement('input');
+lightboxSeek.className='vlib-seek';
+lightboxSeek.type='range';
+lightboxSeek.min=0;lightboxSeek.max=100;lightboxSeek.step=0.1;lightboxSeek.value=0;
+function updateSeekFill(){
+  const pct=lightboxVid.duration?(lightboxVid.currentTime/lightboxVid.duration*100):0;
+  lightboxSeek.value=pct;
+  lightboxSeek.style.background='linear-gradient(to right,#F9BFDC '+pct+'%,rgba(255,255,255,.25) '+pct+'%)';
+}
+lightboxVid.addEventListener('timeupdate',updateSeekFill);
+lightboxVid.addEventListener('loadedmetadata',updateSeekFill);
+lightboxSeek.addEventListener('input',function(e){
+  e.stopPropagation();
+  if(lightboxVid.duration)lightboxVid.currentTime=(parseFloat(lightboxSeek.value)/100)*lightboxVid.duration;
+});
+lightboxSeek.addEventListener('click',function(e){e.stopPropagation();});
+lightboxSeek.addEventListener('mousedown',function(e){e.stopPropagation();});
+
 const lightboxClose=document.createElement('div');
 lightboxClose.className='vlib-lightbox-close';
 lightboxClose.innerHTML='✕';
 
 lightboxInner.appendChild(lightboxVid);
+lightboxInner.appendChild(lightboxSeek);
 lightboxInner.appendChild(lightboxPlay);
 lightboxInner.appendChild(lightboxVolBar);
 lightboxInner.appendChild(lightboxClose);
 lightbox.appendChild(lightboxInner);
 document.body.appendChild(lightbox);
 
-function openLightbox(src){
+function openLightbox(src,state){
   if(activeVid){activeVid.pause();const aw=activeVid.closest('.vlib-wrap');if(aw)aw.classList.remove('playing');activeVid=null;}
   lightboxVid.src=src;
-  lightboxVid.muted=true;
-  lightboxVid.volume=0.6;
-  lightboxVolRange.value=0;
-  lightboxVolIcon.textContent='🔇';
+  const muted=state?state.muted:true;
+  const vol=(state&&state.volume>0)?state.volume:0.6;
+  lightboxVid.volume=vol;
+  lightboxVid.muted=muted;
+  lightboxVolRange.value=muted?0:vol;
+  lightboxVolIcon.textContent=muted?'🔇':'🔊';
+  lightboxSeek.value=0;
+  lightboxSeek.style.background='rgba(255,255,255,.25)';
   lightbox.classList.add('open');
   lightboxInner.classList.add('playing');
   document.body.style.overflow='hidden';
@@ -374,6 +402,7 @@ gridVideos.forEach(function(v){
   if(v.src.toLowerCase().includes('smiirlmims'))vid.style.objectFit='contain';
   if(v.src.toLowerCase().includes('logitech')){vid.style.transform='rotate(-90deg)';vid.style.objectFit='contain';}
   vid.loop=true;
+  vid.muted=true;
 
   const overlay=document.createElement('div');
   overlay.className='vlib-play';
@@ -389,7 +418,7 @@ gridVideos.forEach(function(v){
   const expandBtn=document.createElement('div');
   expandBtn.className='vlib-expand';
   expandBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H4v5M20 9V4h-5M4 15v5h5M15 20h5v-5"/></svg>';
-  expandBtn.addEventListener('click',function(e){e.stopPropagation();openLightbox(v.src);});
+  expandBtn.addEventListener('click',function(e){e.stopPropagation();openLightbox(v.src,{muted:vid.muted,volume:vid.volume});});
 
   wrap.appendChild(vid);
   wrap.appendChild(overlay);
