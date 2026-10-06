@@ -73,12 +73,15 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 #vlib{background:#000;padding:16px 32px 0}
 .vlib-title{font-family:'Syne Mono',monospace;font-size:clamp(11px,1vw,14px);letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:40px;text-align:center}
 .vlib-grid{columns:4;column-gap:16px;padding-bottom:80px}
-.vlib-grid.filtered{columns:unset;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.vlib-grid.filtered{columns:unset;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start}
 .vlib-grid.filtered .vlib-item{margin-bottom:0}
-.vlib-grid.filtered-topo{columns:unset;display:flex;justify-content:flex-start;gap:16px}
+.vlib-grid.filtered-topo{columns:unset;display:flex;flex-wrap:wrap;justify-content:flex-start;gap:16px}
 .vlib-grid.filtered-topo .vlib-item{width:28%;margin-bottom:0}
-.vlib-grid.filtered-misc{columns:unset;display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px}
+.vlib-grid.filtered-misc{columns:unset;display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;align-items:start}
 .vlib-grid.filtered-misc .vlib-item{margin-bottom:0}
+.vlib-grid.filtered-smiirl{columns:unset;display:flex;flex-wrap:wrap;align-items:flex-start;gap:16px}
+.vlib-grid.filtered-smiirl .vlib-item{width:auto;margin-bottom:0}
+.vlib-grid.filtered-smiirl .vlib-wrap{height:280px;width:auto}
 .vlib-grid.filtered-claws{columns:unset;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:68vh;gap:16px}
 .vlib-grid.filtered-claws [data-featured]{grid-column:1;grid-row:1/span 2}
 .vlib-grid.filtered-claws .vlib-item{margin-bottom:0;display:block}
@@ -102,9 +105,10 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
   .cinema-wrap{width:90vw}
   #vlib{padding:48px 20px 0}
   .vlib-grid{columns:1;column-gap:0}
-  .vlib-grid.filtered{columns:1}
-  .vlib-grid.filtered-topo,.vlib-grid.filtered-misc{display:block}
-  .vlib-grid.filtered-topo .vlib-item,.vlib-grid.filtered-misc .vlib-item{width:100%;flex:none}
+  .vlib-grid.filtered{display:block}
+  .vlib-grid.filtered-topo,.vlib-grid.filtered-misc,.vlib-grid.filtered-smiirl{display:block}
+  .vlib-grid.filtered-topo .vlib-item,.vlib-grid.filtered-misc .vlib-item,.vlib-grid.filtered-smiirl .vlib-item{width:100%;flex:none}
+  .vlib-grid.filtered-smiirl .vlib-wrap{height:auto;width:100%}
   .vlib-grid.filtered-claws{display:block;height:auto}
   .vlib-grid.filtered-claws .vlib-item{width:100%}
   .vlib-grid.filtered-claws .vlib-wrap{height:auto;aspect-ratio:3/2}
@@ -237,6 +241,11 @@ const gridVideos=[
   {src:'assets/videotheque%20add-ons/allo_claws.mp4',cat:'claws'},
   {src:'assets/videotheque%20add-ons/topo%20002Lutece_it02.mp4',cat:'topo'},
   {src:'assets/videotheque%20add-ons/Topo_Coulommiers_it01.mp4',cat:'topo'},
+  {src:'assets/videos/001Montreuil_it01.mp4',cat:'topo'},
+  {src:'assets/videos/004Malakoff_it02.mp4',cat:'topo'},
+  {src:'assets/videos/005Issy_it01.mp4',cat:'topo'},
+  {src:'assets/videos/006Bagnolet_it01.mp4',cat:'topo'},
+  {src:'assets/videos/008Sarcelles_it01.mp4',cat:'topo'},
   {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%201%20.mp4',cat:'smiirl'},
   {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%202.mp4',cat:'smiirl'},
   {src:'assets/videos/videos%20page%20smiirl/loutsa%20-%20video%203.mp4',cat:'smiirl'},
@@ -354,7 +363,7 @@ document.querySelectorAll('.vf').forEach(function(btn){
     document.querySelectorAll('.vf').forEach(function(b){b.classList.remove('active');});
     btn.classList.add('active');
     var cat=btn.dataset.cat;
-    grid.classList.remove('filtered','filtered-topo','filtered-claws','filtered-misc');
+    grid.classList.remove('filtered','filtered-topo','filtered-claws','filtered-misc','filtered-smiirl');
     document.querySelectorAll('.vlib-item').forEach(function(item){
       if(cat==='all'||item.dataset.cat===cat){item.classList.remove('hidden');}
       else{
@@ -367,6 +376,7 @@ document.querySelectorAll('.vf').forEach(function(btn){
     document.querySelectorAll('.vlib-item').forEach(function(i){i.style.gridColumn='';i.style.gridRow='';});
     if(cat==='misc'){grid.classList.add('filtered','filtered-misc');}
     else if(cat==='topo'){grid.classList.add('filtered','filtered-topo');}
+    else if(cat==='smiirl'){grid.classList.add('filtered','filtered-smiirl');}
     else if(cat==='claws'){
       grid.classList.add('filtered','filtered-claws');
       var clawsVisible=Array.from(document.querySelectorAll('.vlib-item[data-cat="claws"]'));
