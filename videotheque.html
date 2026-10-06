@@ -259,6 +259,22 @@ const vidObserver=new IntersectionObserver(function(entries){
   });
 },{threshold:0.1});
 
+// ── Lazy load/unload: only keep videos near the viewport actually decoded,
+// otherwise too many simultaneous <video> elements exhaust the browser's
+// decoder pool and tiles start rendering black with stray audio.
+const lazyLoadObserver=new IntersectionObserver(function(entries){
+  entries.forEach(function(e){
+    const v=e.target;
+    if(e.isIntersecting){
+      if(!v.src&&v.dataset.lazySrc)v.src=v.dataset.lazySrc;
+    } else if(v.src&&v!==activeVid){
+      v.pause();
+      v.removeAttribute('src');
+      v.load();
+    }
+  });
+},{rootMargin:'600px 0px',threshold:0});
+
 // ── BUILD GRID dynamically
 const gridVideos=[
   {src:'assets/videotheque%20add-ons/claws%20clic%20clac%20video%20Lisa.mp4',cat:'claws'},
@@ -394,7 +410,8 @@ gridVideos.forEach(function(v){
   const vid=document.createElement('video');
   vid.className='vlib-vid';
   vid.preload='auto';
-  vid.src=v.src;
+  vid.dataset.lazySrc=v.src;
+  lazyLoadObserver.observe(vid);
   vid.playsInline=true;
   if(v.src.toLowerCase().includes('smiirl%20footage'))vid.style.objectPosition='right center';
   if(v.src.toLowerCase().includes('clic%20clac'))vid.style.objectPosition='center 30%';
@@ -470,7 +487,8 @@ gridVideos.forEach(function(v){
         const aw=activeVid.closest('.vlib-wrap');
         if(aw)aw.classList.remove('playing');
       }
-      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;vid.play();wrap.classList.add('playing');activeVid=vid;
+      if(!vid.src&&vid.dataset.lazySrc)vid.src=vid.dataset.lazySrc;
+      vid.volume=0.2;vid.muted=true;volIcon.textContent='🔇';volRange.value=0;vid.play().catch(function(){});wrap.classList.add('playing');activeVid=vid;
     }else{
       vid.pause();wrap.classList.remove('playing');activeVid=null;
     }
