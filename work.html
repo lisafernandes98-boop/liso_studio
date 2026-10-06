@@ -60,7 +60,7 @@ body{background:#e8e4de;color:var(--black)}
 /* project names */
 .proj-sec{padding:64px 48px 0;position:relative}
 .proj-names{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:center;gap:6px 36px;max-width:1280px;margin:0 auto}
-.pw{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.2;font-size:clamp(30px,5.2vw,58px);cursor:pointer;transition:font-style .15s;position:relative}
+.pw{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1.2;font-size:clamp(30px,5.2vw,58px);cursor:pointer;transition:font-style .15s;position:relative;overflow-wrap:break-word;word-break:break-word;max-width:100%}
 .pw.hover-active{font-style:italic}
 .hover-sticker{position:fixed;pointer-events:none;z-index:500;opacity:0;transform:rotate(-4deg) scale(.85);transition:opacity .2s,transform .2s;top:0;left:0}
 .hover-sticker.show{opacity:1;transform:rotate(-3deg) scale(1)}
@@ -78,7 +78,7 @@ body{background:#e8e4de;color:var(--black)}
 .about-sec:has(.about-btn:hover) .pc-d1{transition-delay:.07s}
 .about-sec:has(.about-btn:hover) .pc-d2{transition-delay:.14s}
 @media(max-width:768px){.photo-card{display:none}}
-@media(max-width:768px){.proj-sec{padding:48px 20px 0}.proj-names{gap:2px 14px}.about-sec{padding:64px 24px}}
+@media(max-width:768px){.proj-sec{padding:48px 20px 0}.proj-names{gap:4px 10px}.pw{font-size:clamp(19px,6.2vw,26px)}.about-sec{padding:64px 24px}}
 @media(max-width:1024px){.pw[data-href="liso.html"]{display:none}}
 
 
