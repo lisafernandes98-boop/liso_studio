@@ -224,9 +224,9 @@ body{color:var(--black);font-family:'Syne Mono',monospace;overflow-x:hidden;back
 .vid-feat .vid-feat-title{margin-bottom:10px;font-size:clamp(18px,2vw,28px)}
 
 /* player rose (cohérent avec les autres pages — section loutsa de smiirl) */
-.loutsa-vid-wrap{position:relative;border-radius:16px;overflow:hidden;background:#000;cursor:pointer}
-.loutsa-vid-wrap video{width:100%;display:block;border-radius:16px}
-.loutsa-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:16px;z-index:2;pointer-events:none}
+.loutsa-vid-wrap{position:relative;border-radius:64px;overflow:hidden;background:#000;cursor:pointer}
+.loutsa-vid-wrap video{width:100%;display:block;border-radius:64px}
+.loutsa-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:64px;z-index:2;pointer-events:none}
 .loutsa-play span{font-family:'Syne Mono',monospace;font-size:clamp(34px,4vw,56px);color:#F9BFDC;line-height:1;user-select:none;opacity:0;transition:opacity .2s}
 .loutsa-vid-wrap:not(.playing):hover .loutsa-play span{opacity:1}
 .brunch-lisaa-ico{position:absolute;bottom:0;right:20px;width:80px;height:auto;opacity:0;transform:rotate(5deg) scale(.8) translateY(calc(50% + 6px));transition:opacity .3s,transform .3s;pointer-events:none;z-index:5}
@@ -276,6 +276,7 @@ footer{background:var(--black);padding:28px var(--pad) 40px;margin-top:clamp(48p
 }
 /* Vrai mobile (téléphone) : repli simplifié, pas d'interaction attendue */
 @media(max-width:767px){
+  .loutsa-vid-wrap,.loutsa-vid-wrap video{border-radius:32px}
   .collage{--ch:none}
   .top2{gap:48px}
   .sec-row,.sec-row.r-li{flex-direction:column;align-items:stretch;gap:18px}
