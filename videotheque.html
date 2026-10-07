@@ -89,8 +89,13 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 .vlib-wrap{position:relative;border-radius:24px;overflow:hidden;cursor:pointer;background:#000;aspect-ratio:3/2}
 .vlib-wrap.sq{aspect-ratio:1/1}
 .vlib-wrap.port{aspect-ratio:9/16}
-.vlib-progress{position:absolute;bottom:0;left:0;width:0%;height:3px;background:#F9BFDC;z-index:4;opacity:0;transition:opacity .3s;pointer-events:none;border-radius:0 2px 2px 0}
-.vlib-wrap.playing .vlib-progress{opacity:1}
+/* Seekable progress bar */
+.vlib-seek{-webkit-appearance:none;appearance:none;position:absolute;bottom:0;left:0;right:0;width:100%;height:5px;margin:0;outline:none;cursor:pointer;z-index:4;background:rgba(255,255,255,.25);opacity:0;transition:opacity .25s ease}
+.vlib-wrap:hover .vlib-seek,.vlib-wrap.playing .vlib-seek{opacity:1}
+.vlib-seek::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#F9BFDC;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
+.vlib-seek::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#F9BFDC;border:none;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
+.vlib-seek::-moz-range-progress{background:#F9BFDC}
+.vlib-seek::-moz-range-track{background:rgba(255,255,255,.25)}
 
 /* Project GIF icon — outside the wrap */
 .vlib-item{position:relative;break-inside:avoid;margin-bottom:16px;display:inline-block;width:100%}
@@ -99,33 +104,6 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 .vlib-wrap video{position:absolute;inset:0;z-index:1;width:100%;height:100%;display:block;object-fit:cover}
 .vlib-play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:48px;z-index:2;pointer-events:none}
 .vlib-play span{display:none}
-
-/* Expand-to-lightbox button */
-.vlib-expand{position:absolute;top:12px;right:12px;z-index:6;width:34px;height:34px;border-radius:50%;background:rgba(249,191,220,.85);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.9);transition:opacity .2s ease,transform .2s ease;cursor:pointer}
-.vlib-wrap:hover .vlib-expand{opacity:1;transform:scale(1)}
-.vlib-expand svg{width:15px;height:15px;stroke:#111}
-
-/* Lightbox — frosted glass */
-.vlib-lightbox{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(8,8,10,.5);backdrop-filter:blur(40px) saturate(160%);-webkit-backdrop-filter:blur(40px) saturate(160%);opacity:0;pointer-events:none;transition:opacity .4s cubic-bezier(.22,1,.36,1)}
-.vlib-lightbox.open{opacity:1;pointer-events:auto}
-.vlib-lightbox-inner{position:relative;display:flex;transform:scale(.96);transition:transform .4s cubic-bezier(.22,1,.36,1)}
-.vlib-lightbox.open .vlib-lightbox-inner{transform:scale(1)}
-.vlib-lightbox video{max-width:88vw;max-height:86vh;border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.55);display:block;background:#000}
-.vlib-lightbox-play{border-radius:20px;cursor:pointer;pointer-events:auto}
-.vlib-lightbox-vol{bottom:28px}
-.vlib-seek{-webkit-appearance:none;appearance:none;position:absolute;bottom:0;left:0;right:0;width:100%;height:5px;margin:0;border-radius:0 0 20px 20px;outline:none;cursor:pointer;z-index:4;background:rgba(255,255,255,.25)}
-.vlib-seek::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#F9BFDC;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
-.vlib-seek::-moz-range-thumb{width:13px;height:13px;border-radius:50%;background:#F9BFDC;border:none;cursor:pointer;box-shadow:0 0 0 2px rgba(0,0,0,.3)}
-.vlib-seek::-moz-range-progress{background:#F9BFDC}
-.vlib-seek::-moz-range-track{background:rgba(255,255,255,.25)}
-.vlib-lightbox-inner .vol-bar{opacity:0}
-.vlib-lightbox-inner:hover .vol-bar{opacity:1}
-.vlib-lightbox-close{position:absolute;top:-52px;right:0;width:40px;height:40px;border-radius:50%;background:rgba(249,191,220,.85);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#111;font-size:18px;line-height:1;z-index:3}
-@media(max-width:768px){
-  .vlib-expand{top:8px;right:8px;width:30px;height:30px}
-  .vlib-expand svg{width:13px;height:13px}
-  .vlib-lightbox-close{top:auto;bottom:-52px;right:0}
-}
 @media(max-width:768px){
   #cinema{justify-content:center;padding-top:100px}
   .cinema-wrap{width:90vw}
@@ -294,95 +272,6 @@ const gridVideos=[
 const grid=document.getElementById('vlibGrid');
 const rowContainers={};
 
-// ── Lightbox (frosted-glass expanded view) — same play + volume UI as the tiles
-const lightbox=document.createElement('div');
-lightbox.className='vlib-lightbox';
-const lightboxInner=document.createElement('div');
-lightboxInner.className='vlib-lightbox-inner';
-const lightboxVid=document.createElement('video');
-lightboxVid.playsInline=true;
-lightboxVid.loop=true;
-
-const lightboxPlay=document.createElement('div');
-lightboxPlay.className='vlib-play vlib-lightbox-play';
-lightboxPlay.innerHTML='<span>▶</span>';
-
-const lightboxVolBar=document.createElement('div');
-lightboxVolBar.className='vol-bar vlib-lightbox-vol';
-const lightboxVolIcon=document.createElement('span');
-lightboxVolIcon.className='vol-icon';
-lightboxVolIcon.textContent='🔊';
-const lightboxVolRange=document.createElement('input');
-lightboxVolRange.className='vol-range';
-lightboxVolRange.type='range';lightboxVolRange.min=0;lightboxVolRange.max=1;lightboxVolRange.step=0.01;lightboxVolRange.value=0.6;
-lightboxVolBar.appendChild(lightboxVolIcon);
-lightboxVolBar.appendChild(lightboxVolRange);
-
-const lightboxSeek=document.createElement('input');
-lightboxSeek.className='vlib-seek';
-lightboxSeek.type='range';
-lightboxSeek.min=0;lightboxSeek.max=100;lightboxSeek.step=0.1;lightboxSeek.value=0;
-function updateSeekFill(){
-  const pct=lightboxVid.duration?(lightboxVid.currentTime/lightboxVid.duration*100):0;
-  lightboxSeek.value=pct;
-  lightboxSeek.style.background='linear-gradient(to right,#F9BFDC '+pct+'%,rgba(255,255,255,.25) '+pct+'%)';
-}
-lightboxVid.addEventListener('timeupdate',updateSeekFill);
-lightboxVid.addEventListener('loadedmetadata',updateSeekFill);
-lightboxSeek.addEventListener('input',function(e){
-  e.stopPropagation();
-  if(lightboxVid.duration)lightboxVid.currentTime=(parseFloat(lightboxSeek.value)/100)*lightboxVid.duration;
-});
-lightboxSeek.addEventListener('click',function(e){e.stopPropagation();});
-lightboxSeek.addEventListener('mousedown',function(e){e.stopPropagation();});
-
-const lightboxClose=document.createElement('div');
-lightboxClose.className='vlib-lightbox-close';
-lightboxClose.innerHTML='✕';
-
-lightboxInner.appendChild(lightboxVid);
-lightboxInner.appendChild(lightboxSeek);
-lightboxInner.appendChild(lightboxPlay);
-lightboxInner.appendChild(lightboxVolBar);
-lightboxInner.appendChild(lightboxClose);
-lightbox.appendChild(lightboxInner);
-document.body.appendChild(lightbox);
-
-function openLightbox(src,state){
-  if(activeVid){activeVid.pause();const aw=activeVid.closest('.vlib-wrap');if(aw)aw.classList.remove('playing');activeVid=null;}
-  lightboxVid.src=src;
-  const muted=state?state.muted:true;
-  const vol=(state&&state.volume>0)?state.volume:0.6;
-  lightboxVid.volume=vol;
-  lightboxVid.muted=muted;
-  lightboxVolRange.value=muted?0:vol;
-  lightboxVolIcon.textContent=muted?'🔇':'🔊';
-  lightboxSeek.value=0;
-  lightboxSeek.style.background='rgba(255,255,255,.25)';
-  lightbox.classList.add('open');
-  lightboxInner.classList.add('playing');
-  document.body.style.overflow='hidden';
-  lightboxVid.play().catch(function(){});
-}
-function closeLightbox(){
-  lightbox.classList.remove('open');
-  lightboxInner.classList.remove('playing');
-  lightboxVid.pause();
-  document.body.style.overflow='';
-}
-lightboxClose.addEventListener('click',function(e){e.stopPropagation();closeLightbox();});
-lightboxPlay.addEventListener('click',function(e){
-  e.stopPropagation();
-  if(lightboxVid.paused){lightboxVid.play();lightboxInner.classList.add('playing');}
-  else{lightboxVid.pause();lightboxInner.classList.remove('playing');}
-});
-lightboxVolBar.addEventListener('click',function(e){e.stopPropagation();});
-lightboxVolBar.addEventListener('mousedown',function(e){e.stopPropagation();});
-lightboxVolRange.addEventListener('input',function(e){e.stopPropagation();lightboxVid.volume=parseFloat(lightboxVolRange.value);lightboxVid.muted=lightboxVid.volume===0;lightboxVolIcon.textContent=lightboxVid.volume===0?'🔇':'🔊';});
-lightboxVolIcon.addEventListener('click',function(e){e.stopPropagation();lightboxVid.muted=!lightboxVid.muted;lightboxVolIcon.textContent=lightboxVid.muted?'🔇':'🔊';lightboxVolRange.value=lightboxVid.muted?0:lightboxVid.volume;});
-lightbox.addEventListener('click',function(e){if(e.target===lightbox)closeLightbox();});
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeLightbox();});
-
 gridVideos.forEach(function(v){
   const item=document.createElement('div');
   item.className='vlib-item';
@@ -414,15 +303,8 @@ gridVideos.forEach(function(v){
   ico.src=getIcon(v.src);
   ico.alt='';
 
-  // Expand-to-lightbox button
-  const expandBtn=document.createElement('div');
-  expandBtn.className='vlib-expand';
-  expandBtn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4H4v5M20 9V4h-5M4 15v5h5M15 20h5v-5"/></svg>';
-  expandBtn.addEventListener('click',function(e){e.stopPropagation();openLightbox(v.src,{muted:vid.muted,volume:vid.volume});});
-
   wrap.appendChild(vid);
   wrap.appendChild(overlay);
-  wrap.appendChild(expandBtn);
   item.appendChild(wrap);
   item.appendChild(ico);
   if(v.row){
@@ -460,8 +342,23 @@ gridVideos.forEach(function(v){
   volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.volume===0?'🔇':'🔊';});
   volRange.addEventListener('click',function(e){e.stopPropagation();});
   volIcon.addEventListener('click',function(e){e.stopPropagation();vid.muted=!vid.muted;volIcon.textContent=vid.muted?'🔇':'🔊';volRange.value=vid.muted?0:vid.volume;});
-  var prog=document.createElement('div');prog.className='vlib-progress';wrap.appendChild(prog);
-  vid.addEventListener('timeupdate',function(){if(vid.duration)prog.style.width=(vid.currentTime/vid.duration*100)+'%';});
+  var seek=document.createElement('input');
+  seek.className='vlib-seek';
+  seek.type='range';seek.min=0;seek.max=100;seek.step=0.1;seek.value=0;
+  wrap.appendChild(seek);
+  function updateSeekFill(){
+    var pct=vid.duration?(vid.currentTime/vid.duration*100):0;
+    seek.value=pct;
+    seek.style.background='linear-gradient(to right,#F9BFDC '+pct+'%,rgba(255,255,255,.25) '+pct+'%)';
+  }
+  vid.addEventListener('timeupdate',updateSeekFill);
+  vid.addEventListener('loadedmetadata',updateSeekFill);
+  seek.addEventListener('input',function(e){
+    e.stopPropagation();
+    if(vid.duration)vid.currentTime=(parseFloat(seek.value)/100)*vid.duration;
+  });
+  seek.addEventListener('click',function(e){e.stopPropagation();});
+  seek.addEventListener('mousedown',function(e){e.stopPropagation();});
 
   wrap.addEventListener('click',function(){
     if(vid.paused){
