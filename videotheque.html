@@ -83,11 +83,10 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
 .vlib-grid.filtered-smiirl .vlib-item:not(.hidden){margin-bottom:0;display:block}
 .vlib-grid.filtered-smiirl .vlib-wrap{height:100%;width:100%;aspect-ratio:unset}
 .vlib-grid.filtered-smiirl .vlib-item[data-cat="smiirl"]:has(.vlib-wrap.port){grid-column:3;grid-row:1/span 2}
-.vlib-grid.filtered-claws{columns:unset;display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;height:68vh;gap:16px;align-items:stretch}
+.vlib-grid.filtered-claws{columns:unset;display:grid;grid-template-columns:2fr 1fr;gap:16px;align-items:start}
 .vlib-grid.filtered-claws [data-featured]{grid-column:1;grid-row:1/span 2}
 .vlib-grid.filtered-claws .vlib-item:not(.hidden){margin-bottom:0;display:block}
-.vlib-grid.filtered-claws .vlib-wrap{height:100%;aspect-ratio:unset}
-.vlib-grid.filtered-claws .vlib-wrap video{object-fit:contain}
+.vlib-grid.filtered-claws .vlib-wrap{aspect-ratio:16/9}
 .vlib-wrap{position:relative;border-radius:24px;overflow:hidden;cursor:pointer;background:#000;aspect-ratio:3/2}
 .vlib-wrap.sq{aspect-ratio:1/1}
 .vlib-wrap.port{aspect-ratio:9/16}
@@ -118,7 +117,7 @@ body{color:#fff;font-family:'Syne',sans-serif;overflow-x:hidden;background:#000}
   .vlib-grid.filtered-smiirl .vlib-wrap.port{aspect-ratio:9/16}
   .vlib-grid.filtered-claws{display:block;height:auto}
   .vlib-grid.filtered-claws .vlib-item{width:100%}
-  .vlib-grid.filtered-claws .vlib-wrap{height:auto;aspect-ratio:3/2}
+  .vlib-grid.filtered-claws .vlib-wrap{height:auto;aspect-ratio:16/9}
   .vlib-wrap{border-radius:28px}
   .vh-gif,.vh-inline-gif,.vlib-ico{display:none}
 }
@@ -231,14 +230,19 @@ const vidObserver=new IntersectionObserver(function(entries){
   entries.forEach(function(e){
     const v=e.target;
     if(!e.isIntersecting){
+      v.dataset.inView='';
       if(!v.paused){v.pause();v.closest('.vlib-wrap').classList.remove('playing');}
       if(activeVid===v)activeVid=null;
     } else {
       // Only buffer/decode a tile once it's actually in view — doing this for
       // all ~28 tiles at once at page load exhausts the browser's video
       // decoder pool (black tiles, audio bleeding from the wrong video).
+      v.dataset.inView='1';
       if(v.preload!=='auto')v.preload='auto';
       if(v.readyState>=1&&v.currentTime===0)v.currentTime=0.001;
+      // readyState can still be 0 here if metadata hasn't arrived yet — the
+      // loadedmetadata handler below finishes the nudge in that case so the
+      // tile never gets stuck showing a black first frame.
     }
   });
 },{threshold:0.1});
@@ -342,6 +346,11 @@ gridVideos.forEach(function(v){
     if(!noAudio&&((vid.audioTracks&&vid.audioTracks.length>0)||vid.mozHasAudio))volBar.style.display='flex';
     // Scroll-pause observer
     vidObserver.observe(vid);
+    // If the tile was already in view when metadata finished loading, the
+    // IntersectionObserver's nudge above may have fired too early (before
+    // readyState allowed seeking) and skipped itself — finish it here so
+    // the tile never gets stuck showing a black first frame.
+    if(vid.dataset.inView&&vid.currentTime===0)vid.currentTime=0.001;
   });
 
   volRange.addEventListener('input',function(e){e.stopPropagation();vid.volume=parseFloat(volRange.value);vid.muted=vid.volume===0;volIcon.textContent=vid.volume===0?'🔇':'🔊';});
