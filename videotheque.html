@@ -231,7 +231,10 @@ const vidObserver=new IntersectionObserver(function(entries){
       if(!v.paused){v.pause();v.closest('.vlib-wrap').classList.remove('playing');}
       if(activeVid===v)activeVid=null;
     } else {
-      // force frame when entering viewport
+      // Only buffer/decode a tile once it's actually in view — doing this for
+      // all ~28 tiles at once at page load exhausts the browser's video
+      // decoder pool (black tiles, audio bleeding from the wrong video).
+      if(v.preload!=='auto')v.preload='auto';
       if(v.readyState>=1&&v.currentTime===0)v.currentTime=0.001;
     }
   });
@@ -282,7 +285,7 @@ gridVideos.forEach(function(v){
 
   const vid=document.createElement('video');
   vid.className='vlib-vid';
-  vid.preload='auto';
+  vid.preload='metadata';
   vid.src=v.src;
   vid.playsInline=true;
   if(v.src.toLowerCase().includes('smiirl%20footage'))vid.style.objectPosition='right center';
@@ -328,7 +331,6 @@ gridVideos.forEach(function(v){
   volBar.addEventListener('mousedown',function(e){e.stopPropagation();});
 
   vid.addEventListener('loadedmetadata',function(){
-    vid.currentTime=0.001; // trigger first frame
     // 3 shapes: portrait 9:16 / square 1:1 / landscape 3:2 (default)
     const r=vid.videoWidth/vid.videoHeight;
     if(r<0.7){wrap.classList.add('port');}
