@@ -93,7 +93,7 @@ body{background:#e8e4de;color:var(--black)}
 </head>
 <body>
 
-<video class="video-bg" autoplay muted loop playsinline preload="auto">
+<video id="workBgVid" class="video-bg" autoplay muted loop playsinline preload="auto">
   <source src="assets/videos/video%20my%20work%20background.mp4" type="video/mp4">
 </video>
 <nav class="float-nav" aria-label="Quick navigation">
@@ -245,6 +245,15 @@ document.querySelectorAll('.pw').forEach(w=>{
     requestAnimationFrame(tick);
   }
   tick();
+})();
+
+// Safety net — some browsers (Safari in particular) can leave the background
+// video paused with its tap-to-play icon showing if autoplay is briefly
+// blocked or playback stalls; resume automatically whenever that happens.
+(function(){
+  var bg=document.getElementById('workBgVid');
+  if(!bg)return;
+  bg.addEventListener('pause',function(){bg.play().catch(function(){});});
 })();
 
 // Vidéothèque CTA — video reveal on hover

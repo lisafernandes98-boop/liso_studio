@@ -145,7 +145,7 @@ body{background:var(--bg)}
   </div>
 </header>
   <div class="hero-vid-wrap">
-    <video id="heroVid" autoplay muted playsinline preload="auto">
+    <video id="heroVid" autoplay muted loop playsinline preload="auto">
       <source src="assets/videos/video%20hero%20HP.mp4?v=7" type="video/mp4">
     </video>
   </div>
@@ -211,7 +211,8 @@ if(mob){
 
 
 const vid=document.getElementById('heroVid');
-new IntersectionObserver(e=>{e[0].isIntersecting?vid.play().catch(()=>{}):vid.pause()},{threshold:.1}).observe(document.getElementById('heroSec'));
+let heroInView=true;
+new IntersectionObserver(e=>{heroInView=e[0].isIntersecting;heroInView?vid.play().catch(()=>{}):vid.pause()},{threshold:.1}).observe(document.getElementById('heroSec'));
 // Loop a touch before the true end — trims trailing dead/black frames
 vid.addEventListener('timeupdate',function(){
   if(vid.duration&&vid.currentTime>=vid.duration-1.5){
@@ -219,6 +220,10 @@ vid.addEventListener('timeupdate',function(){
     vid.play().catch(()=>{});
   }
 });
+// Safety net — some browsers (Safari in particular) can leave the video
+// paused with its tap-to-play icon showing if autoplay is briefly blocked
+// or playback stalls; resume automatically whenever that happens in view.
+vid.addEventListener('pause',function(){if(heroInView)vid.play().catch(()=>{});});
 // Logos section work — hover = GIF swap / clic+drag = grab-and-stay
 (function(){
   var ws=document.getElementById('workSec');
